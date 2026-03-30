@@ -124,6 +124,7 @@ Then register the commands with Claude Code. Open or create
 {
   "customSlashCommands": [
     { "name": "pm-setup", "file": ".pm-groundwork/commands/pm-setup.md" },
+    { "name": "pm-start-session", "file": ".pm-groundwork/commands/pm-start-session.md" },
     { "name": "pm-end-session", "file": ".pm-groundwork/commands/pm-end-session.md" }
   ]
 }
@@ -141,12 +142,13 @@ Then add to your global Claude Code settings at `~/.claude/settings.json`:
 {
   "customSlashCommands": [
     { "name": "pm-setup", "file": "~/pm-groundwork/commands/pm-setup.md" },
+    { "name": "pm-start-session", "file": "~/pm-groundwork/commands/pm-start-session.md" },
     { "name": "pm-end-session", "file": "~/pm-groundwork/commands/pm-end-session.md" }
   ]
 }
 ```
 
-**Verify:** Start Claude Code and type `/pm-` — both commands should
+**Verify:** Start Claude Code and type `/pm-` — all three commands should
 appear in autocomplete.
 
 > **Git is optional.** You don't need a git repo for your project.
@@ -175,15 +177,26 @@ At the end, it creates your full workspace and offers to initialize GSD
 (`/gsd:new-project`) using the context you already provided — no
 repeating yourself.
 
-### Step 5 — End every session
+### Step 5 — The daily workflow
 
-When you're done working, always run:
+From now on, every session follows this pattern:
+
+**Start of session:**
+```
+/pm-start-session
+```
+Claude reads all your workspace files, checks GSD state, reviews recent
+history, and gives you a structured briefing: what was done, what's next,
+any risks or decisions due. Then it helps you pick what to work on.
+
+**End of session:**
 ```
 /pm-end-session
 ```
+Claude updates your daily log, syncs GSD state, logs any decisions made,
+and backs up to git if configured.
 
-This updates your daily log, syncs GSD state, logs any decisions, and
-backs up to git if configured. That's the entire workflow.
+That's it — three commands total: setup once, start and end every session.
 
 ---
 
@@ -219,16 +232,17 @@ session, not files meant to be committed.
 
 ## The daily workflow
 ```
-Start session
-  → Claude auto-reads CLAUDE.md, which loads all workspace files
-  → Claude flags any decisions due for review
+/pm-start-session
+  → Reads all workspace files and GSD state
+  → Briefing: progress, what's next, risks, decisions due
+  → Helps you pick what to focus on
 
 Do your work
   → Claude logs decisions to DECISIONS.md as they happen
   → Claude updates risks and priorities in MEMORY.md
   → Claude suggests the right GSD command for structured work
 
-End session → /pm-end-session
+/pm-end-session
   → Daily log created in memory/
   → GSD state updated
   → MEMORY.md and CONTEXT.md synced

@@ -12,6 +12,10 @@
         "description": "Bootstrap a new PM project workspace with an interactive interview. Creates all management files, initializes decision logging, sets up GSD framework, and tailors everything to your project and working style."
       },
       {
+        "name": "pm-start-session",
+        "description": "Start-of-session project recap. Summarizes progress, surfaces what's next, flags risks and decisions due for review, and helps you choose what to work on."
+      },
+      {
         "name": "pm-end-session",
         "description": "End-of-session wrap-up. Updates memory, logs decisions, syncs GSD state, and backs up to git if configured."
       }

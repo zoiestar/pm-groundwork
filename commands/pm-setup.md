@@ -340,7 +340,7 @@ Planning artifacts live in `.planning/`. Key files:
 
 ## Session protocol
 
-- Start: read workspace files (above), check decision reviews
+- Start: run `/pm-start-session` for a full briefing and to pick today's focus
 - During: log decisions, update risks, maintain daily memory log
 - End: always use `/pm-end-session` — never do ad-hoc wrap-up
 ```
@@ -412,7 +412,12 @@ Calibrate instructions to TECH_LEVEL — simpler language for C, terser for A.
 ```markdown
 # Agents — [PROJECT NAME]
 
-## Session start (do this every session, in order)
+## Session start
+Run /pm-start-session. This reads all workspace files, checks GSD state,
+reviews recent history, and presents a structured briefing. It also helps
+the user decide what to focus on.
+
+If /pm-start-session is not available, do this manually in order:
 1. Read CONTEXT.md for quick project orientation
 2. Read MEMORY.md for current status, priorities, and stakeholder context
 3. Read USER.md to recall working preferences
@@ -751,8 +756,8 @@ Project workspace initialized via /pm-setup.
 [List any from interview, or "None — workspace initialized"]
 
 ### Next actions
-- Run /gsd:new-project to initialize GSD framework
-- Complete manual steps from setup checklist
+- Run /gsd:new-project to initialize GSD framework (if skipped during setup)
+- Start next session with /pm-start-session for a full briefing
 ```
 
 ---
@@ -880,6 +885,10 @@ If the user says skip, note in the daily log that GSD initialization is pending.
 ### 5d — Manual steps checklist
 ```
 --- Things to do next ---
+
+Your daily workflow from now on:
+  /pm-start-session  → briefing + pick what to work on
+  /pm-end-session    → wrap up, log, and back up
 
 [If GSD was skipped]:
 [ ] Initialize GSD when ready:
