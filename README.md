@@ -40,40 +40,84 @@ technical comfort level during setup and calibrate everything accordingly.
 
 ---
 
-## Prerequisites
+## Getting started
 
-**1. Claude Code**
-```bash
-# macOS / Linux
-curl -fsSL https://claude.ai/install.sh | bash
-
-# Windows (PowerShell)
-irm https://claude.ai/install.ps1 | iex
-```
-Requires a Claude.ai account (Pro or higher recommended).
-
-**2. GSD framework**
-```bash
-npx get-shit-done-cc@latest
-```
-Install once per machine. Works globally across all projects.
-
-**3. Git (optional)**
-Only needed if you want session backups. Groundwork will ask during
-setup and configure itself accordingly.
+Three things to install, in order. Each one builds on the last.
 
 ---
 
-## Installation
+### Step 1 — Install Claude Code
 
-**Option 1 — Clone into your project (recommended)**
+Claude Code is the AI coding agent that runs in your terminal (or inside
+Cursor). Groundwork is built on top of it.
+
+**macOS / Linux:**
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+**Windows (PowerShell):**
+```powershell
+irm https://claude.ai/install.ps1 | iex
+```
+
+You'll need a Claude.ai account — Pro plan or higher is recommended.
+
+Verify it's working:
+```bash
+claude --version
+```
+
+If you're using Cursor, Claude Code runs from the integrated terminal.
+Open a terminal inside Cursor and the `claude` command works the same way.
+
+> **New to Claude Code?** It's a command-line AI assistant that can read
+> your files, run commands, and help you work. Think of it as a teammate
+> in your terminal. You type instructions in plain English and it does the
+> work. [Learn more](https://docs.anthropic.com/en/docs/claude-code)
+
+---
+
+### Step 2 — Install the GSD framework
+
+GSD (Get Shit Done) is a structured planning and execution framework for
+Claude Code. It powers all the `/gsd:*` commands that Groundwork uses for
+project planning, phase execution, and progress tracking.
+
+```bash
+npx get-shit-done-cc@latest
+```
+
+This installs once per machine and works globally across all projects.
+You don't need to run this inside any specific folder.
+
+Verify it's working — start Claude Code and type `/gsd:help`. You should
+see a list of available GSD commands.
+
+> **What does GSD actually do?** It gives Claude a structured workflow:
+> break work into milestones and phases, plan before executing, verify
+> when done. Without GSD, Claude just does whatever you ask with no
+> structure. With GSD, it plans, tracks, and validates. Groundwork
+> connects your PM context (stakeholders, decisions, priorities) into
+> that workflow.
+
+---
+
+### Step 3 — Install Groundwork
+
+Now install the PM commands themselves. You have two options depending on
+whether you want Groundwork available in one project or everywhere.
+
+**Option A — Per-project install (recommended)**
+
+Navigate to your project folder and clone:
 ```bash
 cd /path/to/your/project
 git clone https://github.com/zoiestar/pm-groundwork .pm-groundwork
 ```
 
-Then add the commands to your Claude Code settings. Open or create
-`.claude/settings.json` in your project root:
+Then register the commands with Claude Code. Open or create
+`.claude/settings.json` in your project root and add:
 ```json
 {
   "customSlashCommands": [
@@ -83,14 +127,14 @@ Then add the commands to your Claude Code settings. Open or create
 }
 ```
 
-**Option 2 — Install globally (all projects)**
+**Option B — Global install (all projects)**
 
 Clone once to a central location:
 ```bash
 git clone https://github.com/zoiestar/pm-groundwork ~/pm-groundwork
 ```
 
-Then add to your global Claude Code settings (`~/.claude/settings.json`):
+Then add to your global Claude Code settings at `~/.claude/settings.json`:
 ```json
 {
   "customSlashCommands": [
@@ -100,34 +144,44 @@ Then add to your global Claude Code settings (`~/.claude/settings.json`):
 }
 ```
 
-Verify by starting Claude Code and typing `/pm-` — both commands should
+**Verify:** Start Claude Code and type `/pm-` — both commands should
 appear in autocomplete.
+
+> **Git is optional.** You don't need a git repo for your project.
+> Groundwork will ask during setup. If you say no, session backups write
+> to local files only. You can add a repo later.
 
 ---
 
-## Quick start
+### Step 4 — Run setup
+
+Navigate to your project folder and start Claude Code:
 ```bash
 cd /path/to/your/project
 claude
 ```
 
-Then in Claude Code:
+Then run the setup interview:
 ```
 /pm-setup
 ```
 
-Setup walks you through an interactive interview — one question at a time
+This walks you through an interactive interview — one question at a time
 with selectable options, not a wall of text. Takes about 5 minutes.
 
-At the end, it offers to initialize GSD (`/gsd:new-project`) using the
-context you already provided — no repeating yourself.
+At the end, it creates your full workspace and offers to initialize GSD
+(`/gsd:new-project`) using the context you already provided — no
+repeating yourself.
 
-End every session with:
+### Step 5 — End every session
+
+When you're done working, always run:
 ```
 /pm-end-session
 ```
 
-That's the entire workflow.
+This updates your daily log, syncs GSD state, logs any decisions, and
+backs up to git if configured. That's the entire workflow.
 
 ---
 
@@ -211,30 +265,16 @@ For the full list: `/gsd:help`
 
 ## FAQ
 
-**Does this work with Cursor?**
-Yes — Cursor is a first-class supported environment. Open your project
-folder in Cursor, start Claude Code from the integrated terminal, and
-run `/pm-setup` exactly as you would in a standalone terminal session.
-All commands, workspace files, and git backup work identically in both.
-
-**Do I need a git repo?**
-No. `/pm-setup` will ask. If not, session backups write to local files
-only. You can add a repo later by updating the `Version control` field
-in `USER.md`.
-
 **What if I run /pm-setup on a project that already has files?**
 Groundwork will scan for existing files and offer to read them. If you
 say yes, it pre-fills interview answers from what it finds — you just
 confirm or change each one instead of typing from scratch.
 
-**What's GSD and do I have to use it?**
-GSD (Get Shit Done) is a structured planning framework for Claude Code.
-It's a prerequisite for Groundwork and powers all structured work execution.
-After `/pm-setup` finishes, it will offer to run `/gsd:new-project` to
-initialize the framework. You don't have to use the full workflow for every
-task — `/gsd:quick` and `/gsd:fast` handle ad-hoc work without the full
-planning loop. Claude will suggest the right GSD command based on what
-you're trying to do.
+**Do I have to use GSD for everything?**
+No. GSD powers structured work (milestones, phases, execution plans),
+but you don't have to use the full workflow for every task. `/gsd:quick`
+and `/gsd:fast` handle ad-hoc work without the full planning loop.
+Claude will suggest the right command based on what you're doing.
 
 **Will my workspace files be committed to git?**
 No. `/pm-setup` adds all workspace files to `.gitignore` automatically.
