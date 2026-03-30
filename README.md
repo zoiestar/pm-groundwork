@@ -1,0 +1,219 @@
+# Groundwork
+
+**A Claude Code starter kit for program, project, and product managers.**
+
+Groundwork gives Claude persistent memory, structured decision logging,
+and a guided setup interview — so every session starts with full context
+and ends with nothing lost.
+
+Built for PMs who use Claude Code (in terminal or Cursor) and want an agent
+that actually knows their project, remembers their stakeholders, tracks their
+decisions, and gets smarter over time.
+
+---
+
+## What problem does this solve?
+
+Claude Code has no memory between sessions by default. Every time you
+start a new chat, you're starting from zero — re-explaining the project,
+the stakeholders, the decisions already made, the things that matter.
+
+Groundwork fixes that. Run `/pm-setup` once when you start a project.
+From then on, Claude reads your workspace files at the start of every
+session and picks up exactly where you left off.
+
+It also gives you a decision log that captures *why* decisions were made,
+not just *what* was decided — which is the thing that actually matters
+six months later when someone asks "why did we do it this way?"
+
+---
+
+## Who this is for
+
+- Program managers running cross-functional initiatives
+- Product managers managing launches or roadmaps
+- Project managers delivering client or internal work
+- Operations leads managing process or tooling changes
+
+You don't need to be a developer. Groundwork will ask about your
+technical comfort level during setup and calibrate everything accordingly.
+
+---
+
+## Prerequisites
+
+**1. Claude Code**
+```bash
+# macOS / Linux
+curl -fsSL https://claude.ai/install.sh | bash
+
+# Windows (PowerShell)
+irm https://claude.ai/install.ps1 | iex
+```
+Requires a Claude.ai account (Pro or higher recommended).
+
+**2. GSD framework**
+```bash
+npx get-shit-done-cc@latest
+```
+Install once per machine. Works globally across all projects.
+
+**3. Git (optional)**
+Only needed if you want session backups. Groundwork will ask during
+setup and configure itself accordingly.
+
+---
+
+## Installation
+```bash
+claude plugin install https://github.com/zoiestar/pm-groundwork
+```
+
+Verify:
+```bash
+claude plugin list
+```
+
+---
+
+## Quick start
+```bash
+cd /path/to/your/project
+claude
+```
+
+Then in Claude Code:
+```
+/pm-setup
+```
+
+Takes about 5 minutes. At the end, your full workspace is ready.
+
+End every session with:
+```
+/pm-end-session
+```
+
+That's the entire workflow.
+
+---
+
+## What gets created
+
+All files are automatically gitignored — private context for your Claude
+session, not files meant to be committed.
+
+| File | What it does |
+|------|-------------|
+| `AGENTS.md` | Claude's behavior rules — what to read, when, and how to act |
+| `USER.md` | Your context, role, tools, and working preferences |
+| `MEMORY.md` | Persistent project knowledge — stakeholders, priorities, risks, decisions summary |
+| `DECISIONS.md` | Full decision log with rationale, alternatives, and review dates |
+| `CONTEXT.md` | Quick orientation summary Claude reads at the start of every session |
+| `IDENTITY.md` | Claude's role and mission on this specific project |
+| `SOUL.md` | Claude's communication style, calibrated to your project type |
+| `HEARTBEAT.md` | Session maintenance routine |
+| `memory/` | Daily session logs — one file per day, auto-created |
+| `.planning/` | GSD planning artifacts — roadmap, state, phase plans |
+
+### Optional MEMORY.md sections
+
+| Section | Activated when |
+|---------|---------------|
+| `[CLIENT]` Client context | Client-facing deliverable |
+| `[LAUNCH]` Launch tracker | Product launch / go-to-market |
+| `[PROGRAM]` Dependencies map | Cross-functional program |
+| `[OPS]` Process/tooling context | Internal ops or tooling project |
+
+---
+
+## The daily workflow
+```
+Start session
+  → Claude reads CONTEXT.md, MEMORY.md, USER.md automatically
+  → Claude flags any decisions due for review
+
+Do your work
+  → Claude logs decisions to DECISIONS.md as they happen
+  → Claude updates risks and priorities in MEMORY.md
+
+End session → /pm-end-session
+  → Daily log created in memory/
+  → GSD state updated
+  → MEMORY.md and CONTEXT.md synced
+  → Git backup (if repo configured)
+```
+
+---
+
+## FAQ
+
+**Does this work with Cursor?**
+Yes — Cursor is a first-class supported environment. Open your project
+folder in Cursor, start Claude Code from the integrated terminal, and
+run `/pm-setup` exactly as you would in a standalone terminal session.
+All commands, workspace files, and git backup work identically in both.
+
+**Do I need a git repo?**
+No. `/pm-setup` will ask. If not, session backups write to local files
+only. You can add a repo later by updating the `Version control` field
+in `USER.md`.
+
+**What if I run /pm-setup on a project that already has files?**
+Groundwork will ask if it should scan your existing files and use them
+to pre-fill the setup. Say yes.
+
+**What's GSD and do I have to use it?**
+GSD (Get Shit Done) is a structured planning framework for Claude Code.
+It's a prerequisite for Groundwork, but you don't have to use the full
+workflow for every task. `/gsd:quick` handles ad-hoc work without the
+full planning loop.
+
+**Will my workspace files be committed to git?**
+No. `/pm-setup` adds all workspace files to `.gitignore` automatically.
+
+**Can multiple people on the same team use this?**
+Yes, but each person runs their own `/pm-setup` in their own local
+environment. Workspace files are per-person, not shared.
+
+**How do I update Groundwork?**
+```bash
+claude plugin update pm-groundwork
+```
+
+**Something broke. What do I do?**
+Open an issue at github.com/zoiestar/pm-groundwork/issues with the
+command you ran, the error you got, your Claude Code version
+(`claude --version`), and your OS.
+
+---
+
+## Contributing
+
+Most useful additions:
+- New optional MEMORY.md sections for project types not covered
+- Improvements to the `/pm-setup` interview flow based on real use
+- Additional FAQ entries from issues
+- Translations of the README
+
+**To contribute:**
+1. Fork the repo
+2. Create a branch: `git checkout -b your-feature-name`
+3. Make your changes
+4. Open a pull request with a clear description
+
+For significant changes, open an issue first.
+
+**Code of conduct:** Be direct, be kind, assume good intent.
+
+---
+
+## License
+
+MIT — use it, fork it, build on it.
+
+---
+
+*Built by [Jackie Romero](https://github.com/zoiestar) —
+sr. program manager, technical leader, and reluctant but committed
+Claude Code power user.*
