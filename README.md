@@ -215,5 +215,4 @@ MIT — use it, fork it, build on it.
 ---
 
 *Built by [Jackie Romero](https://github.com/zoiestar) —
-sr. program manager, technical leader, and reluctant but committed
-Claude Code power user.*
+sr. program manager and AI-powered PM tooling nerd.*
