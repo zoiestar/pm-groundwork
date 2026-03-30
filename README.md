@@ -80,9 +80,11 @@ Open a terminal inside Cursor and the `claude` command works the same way.
 
 ### Step 2 — Install the GSD framework
 
-GSD (Get Shit Done) is a structured planning and execution framework for
-Claude Code. It powers all the `/gsd:*` commands that Groundwork uses for
-project planning, phase execution, and progress tracking.
+[GSD (Get Shit Done)](https://github.com/gsd-build/get-shit-done) is a
+structured planning and execution framework for Claude Code, created by
+[Lex Christopherson](https://github.com/glittercowboy). It powers all
+the `/gsd:*` commands that Groundwork uses for project planning, phase
+execution, and progress tracking.
 
 ```bash
 npx get-shit-done-cc@latest
