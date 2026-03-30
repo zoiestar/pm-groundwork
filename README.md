@@ -65,14 +65,43 @@ setup and configure itself accordingly.
 ---
 
 ## Installation
+
+**Option 1 — Clone into your project (recommended)**
 ```bash
-claude plugin install https://github.com/zoiestar/pm-groundwork
+cd /path/to/your/project
+git clone https://github.com/zoiestar/pm-groundwork .pm-groundwork
 ```
 
-Verify:
-```bash
-claude plugin list
+Then add the commands to your Claude Code settings. Open or create
+`.claude/settings.json` in your project root:
+```json
+{
+  "customSlashCommands": [
+    { "name": "pm-setup", "file": ".pm-groundwork/commands/pm-setup.md" },
+    { "name": "pm-end-session", "file": ".pm-groundwork/commands/pm-end-session.md" }
+  ]
+}
 ```
+
+**Option 2 — Install globally (all projects)**
+
+Clone once to a central location:
+```bash
+git clone https://github.com/zoiestar/pm-groundwork ~/pm-groundwork
+```
+
+Then add to your global Claude Code settings (`~/.claude/settings.json`):
+```json
+{
+  "customSlashCommands": [
+    { "name": "pm-setup", "file": "~/pm-groundwork/commands/pm-setup.md" },
+    { "name": "pm-end-session", "file": "~/pm-groundwork/commands/pm-end-session.md" }
+  ]
+}
+```
+
+Verify by starting Claude Code and typing `/pm-` — both commands should
+appear in autocomplete.
 
 ---
 
@@ -87,7 +116,11 @@ Then in Claude Code:
 /pm-setup
 ```
 
-Takes about 5 minutes. At the end, your full workspace is ready.
+Setup walks you through an interactive interview — one question at a time
+with selectable options, not a wall of text. Takes about 5 minutes.
+
+At the end, it offers to initialize GSD (`/gsd:new-project`) using the
+context you already provided — no repeating yourself.
 
 End every session with:
 ```
@@ -105,6 +138,7 @@ session, not files meant to be committed.
 
 | File | What it does |
 |------|-------------|
+| `CLAUDE.md` | Auto-loaded entrypoint — session protocol, GSD command routing, file reading order |
 | `AGENTS.md` | Claude's behavior rules — what to read, when, and how to act |
 | `USER.md` | Your context, role, tools, and working preferences |
 | `MEMORY.md` | Persistent project knowledge — stakeholders, priorities, risks, decisions summary |
@@ -130,12 +164,13 @@ session, not files meant to be committed.
 ## The daily workflow
 ```
 Start session
-  → Claude reads CONTEXT.md, MEMORY.md, USER.md automatically
+  → Claude auto-reads CLAUDE.md, which loads all workspace files
   → Claude flags any decisions due for review
 
 Do your work
   → Claude logs decisions to DECISIONS.md as they happen
   → Claude updates risks and priorities in MEMORY.md
+  → Claude suggests the right GSD command for structured work
 
 End session → /pm-end-session
   → Daily log created in memory/
@@ -143,6 +178,34 @@ End session → /pm-end-session
   → MEMORY.md and CONTEXT.md synced
   → Git backup (if repo configured)
 ```
+
+---
+
+## GSD commands
+
+After setup, these commands are available for structured work. Claude will
+suggest the right one based on what you're doing — you don't need to
+memorize them.
+
+| Command | What it does |
+|---------|-------------|
+| `/gsd:new-project` | Initialize the planning framework (run once during setup) |
+| `/gsd:new-milestone` | Start a new milestone cycle with updated goals |
+| `/gsd:discuss-phase` | Gather context before planning a phase of work |
+| `/gsd:plan-phase` | Create a detailed execution plan |
+| `/gsd:execute-phase` | Execute a planned phase |
+| `/gsd:verify-work` | Validate deliverables against success criteria |
+| `/gsd:quick` | Structured but fast — for tasks that need tracking but not full planning |
+| `/gsd:fast` | Inline execution — no subagents, no overhead |
+| `/gsd:progress` | See where things stand |
+| `/gsd:next` | Advance to the next logical step |
+| `/gsd:resume-work` | Pick up after a break with full context restoration |
+| `/gsd:debug` | Systematic debugging with persistent state |
+| `/gsd:note` | Capture an idea quickly |
+| `/gsd:add-backlog` | Park an idea for later |
+| `/gsd:stats` | Project metrics and timeline |
+
+For the full list: `/gsd:help`
 
 ---
 
@@ -160,14 +223,18 @@ only. You can add a repo later by updating the `Version control` field
 in `USER.md`.
 
 **What if I run /pm-setup on a project that already has files?**
-Groundwork will ask if it should scan your existing files and use them
-to pre-fill the setup. Say yes.
+Groundwork will scan for existing files and offer to read them. If you
+say yes, it pre-fills interview answers from what it finds — you just
+confirm or change each one instead of typing from scratch.
 
 **What's GSD and do I have to use it?**
 GSD (Get Shit Done) is a structured planning framework for Claude Code.
-It's a prerequisite for Groundwork, but you don't have to use the full
-workflow for every task. `/gsd:quick` handles ad-hoc work without the
-full planning loop.
+It's a prerequisite for Groundwork and powers all structured work execution.
+After `/pm-setup` finishes, it will offer to run `/gsd:new-project` to
+initialize the framework. You don't have to use the full workflow for every
+task — `/gsd:quick` and `/gsd:fast` handle ad-hoc work without the full
+planning loop. Claude will suggest the right GSD command based on what
+you're trying to do.
 
 **Will my workspace files be committed to git?**
 No. `/pm-setup` adds all workspace files to `.gitignore` automatically.
@@ -178,7 +245,8 @@ environment. Workspace files are per-person, not shared.
 
 **How do I update Groundwork?**
 ```bash
-claude plugin update pm-groundwork
+cd .pm-groundwork   # or wherever you cloned it
+git pull
 ```
 
 **Something broke. What do I do?**

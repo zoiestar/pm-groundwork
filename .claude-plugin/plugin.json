@@ -1,7 +1,7 @@
 {
     "name": "pm-groundwork",
     "version": "1.0.0",
-    "description": "A Claude Code starter kit for program, project, and product managers. Works in terminal and Cursor. Persistent memory, structured decision logging, GSD workflow integration, and a tailored setup interview — all in one installable plugin.",
+    "description": "A Claude Code starter kit for program, project, and product managers. Works in terminal and Cursor. Interactive setup interview, persistent memory, structured decision logging, and full GSD framework integration — all in one installable plugin.",
     "author": {
       "name": "Jackie",
       "github": "zoiestar"
@@ -9,7 +9,7 @@
     "commands": [
       {
         "name": "pm-setup",
-        "description": "Bootstrap a new PM project workspace with a guided interview. Creates all management files, initializes decision logging, and tailors everything to your project and working style."
+        "description": "Bootstrap a new PM project workspace with an interactive interview. Creates all management files, initializes decision logging, sets up GSD framework, and tailors everything to your project and working style."
       },
       {
         "name": "pm-end-session",

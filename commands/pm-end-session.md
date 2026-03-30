@@ -22,7 +22,9 @@ Be thorough but concise — this is a wrap-up, not a deep dive.
 
 ## Step 0 — Gather context
 
-Run these commands to understand what happened this session:
+Read CLAUDE.md to orient yourself, then check USER.md "Version control" field.
+
+If a git repo is configured, run:
 ```bash
 git diff
 git diff --cached
@@ -30,17 +32,20 @@ git status
 git log --oneline --since="8 hours ago"
 ```
 
-If no git repo is configured (check USER.md "Version control" field),
-skip git commands entirely.
+If no git repo is configured, skip git commands entirely.
 
 Read `.planning/STATE.md` and `.planning/ROADMAP.md` if they exist.
 
-Present a brief summary of detected changes, then ask:
+Present a brief summary of detected changes, then use AskUserQuestion:
 
-> Any session notes to add? Decisions made, blockers hit, stakeholder
-> updates, things to remember, or corrections to the above?
+**Question:** "Anything to add before I wrap up?"
+**Options:**
+- "Nope, wrap it up" → "Everything looks right"
+- "Yes, I have notes" → "Decisions, blockers, stakeholder updates, or corrections"
+- "Let me review first" → "Show me more detail before closing out"
 
 **Wait for the user's response before proceeding.**
+If they have notes, let them type freely, then proceed.
 
 ---
 
@@ -141,28 +146,28 @@ If no decisions: "No new decisions this session."
 
 ---
 
-## Step 4 — Claude memory
+## Step 4 — Session memory
 
-Detect the Claude memory path:
-```bash
-ls ~/.claude/projects/
-```
+Update the project's persistent memory by writing key session facts to
+`memory/YYYY-MM-DD.md` (already created in Step 1).
 
-Find the folder matching this project. Update the main project memory
-file with current status, new decisions or key facts, updated next
-actions, today's date as last-updated.
-
-If path can't be detected, ask the user to run `ls ~/.claude/projects/`
-and share the matching folder name.
+Review what was captured in the daily log and ensure any durable facts
+(new stakeholders, constraints, preferences, or context that should
+persist beyond today) are promoted to MEMORY.md in the appropriate
+section. This is the project's primary memory system — the daily logs
+plus MEMORY.md are what Claude reads at the start of every session.
 
 ---
 
-## Step 5 — MEMORY.md / CONTEXT.md sync
+## Step 5 — Workspace docs sync
 
 Update MEMORY.md only if meaningful new facts emerged (new stakeholder,
 new constraint, completed milestone, changed status).
 
 Update CONTEXT.md only if the project's current state meaningfully shifted.
+
+Update CLAUDE.md only if the GSD state section needs updating (e.g., new
+`.planning/` files were created, project was initialized, milestone changed).
 
 If nothing meaningful changed: "Project root docs unchanged."
 
@@ -186,10 +191,14 @@ If ANY matches found: stop, show the user, do NOT commit until confirmed safe.
 
 If clean:
 ```bash
-git add .
+git add -u
 git commit -m "chore: end-of-session backup YYYY-MM-DD"
 git push origin $(git branch --show-current)
 ```
+
+Note: `git add -u` stages only tracked files. If new files were created
+that should be committed, list them explicitly with `git add <file>`
+rather than using `git add .` which could stage unintended files.
 
 If nothing committable:
 > No public files changed — skipping git backup. Normal if all changes
@@ -204,7 +213,7 @@ Daily log:      [created/updated/skipped]
 GSD state:      [updated/skipped]
 Decisions log:  [updated — #XXX added / skipped]
 Claude memory:  [updated/skipped]
-Project docs:   [updated/skipped]
+Workspace docs: [CLAUDE.md / MEMORY.md / CONTEXT.md updated / skipped]
 Git backup:     [committed + pushed / nothing to commit / skipped — no repo]
 ```
 
