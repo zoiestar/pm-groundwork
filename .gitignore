@@ -1,2 +1,9 @@
 # Personal Claude Code settings (not for distribution)
 .claude/settings.local.json
+
+# Session memory logs (user-specific, not for distribution)
+memory/
+
+# Build artifacts and dependencies
+pm-groundwork-mcp/node_modules/
+pm-groundwork-mcp/dist/

@@ -1,0 +1,43 @@
+{
+  "name": "pm-groundwork-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for PM Groundwork — cross-tool PM workspace management for Claude Code, Codex, Cursor, and Gemini CLI",
+  "author": {
+    "name": "Jackie",
+    "url": "https://github.com/zoiestar"
+  },
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "pm-groundwork-mcp": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "glob": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.5.0"
+  },
+  "keywords": [
+    "mcp",
+    "pm",
+    "project-management",
+    "claude-code",
+    "codex",
+    "cursor",
+    "gemini-cli"
+  ]
+}
