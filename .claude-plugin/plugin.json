@@ -1,7 +1,7 @@
 {
     "name": "pm-groundwork",
     "version": "1.0.0",
-    "description": "A Claude Code starter kit for program, project, and product managers. Works in terminal and Cursor. Interactive setup interview, persistent memory, structured decision logging, and full GSD framework integration — all in one installable plugin.",
+    "description": "A PM starter kit for AI coding tools — Claude Code, Cursor, Codex, and Gemini CLI. Interactive setup interview, persistent memory, structured decision logging, and optional GSD framework integration. Install as slash commands (Claude Code) or MCP server (any tool).",
     "author": {
       "name": "Jackie",
       "github": "zoiestar"
