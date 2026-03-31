@@ -18,6 +18,10 @@
       {
         "name": "pm-end-session",
         "description": "End-of-session wrap-up. Updates memory, logs decisions, syncs GSD state, and backs up to git if configured."
+      },
+      {
+        "name": "pm-draft",
+        "description": "Draft PM documents — PRDs, charters, roadmaps, risk plans, status reports, and more. Reads workspace context, asks targeted questions, generates a personalized first draft."
       }
     ],
     "tags": ["pm", "project-management", "program-management", "productivity", "memory", "decisions", "gsd"],
