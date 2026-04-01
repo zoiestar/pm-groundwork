@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "MCP server for PM Groundwork — cross-tool PM workspace management for Claude Code, Codex, Cursor, and Gemini CLI",
   "author": {
-    "name": "Jackie",
-    "url": "https://github.com/zoiestar"
+    "name": "PM Groundwork Contributors",
+    "url": "https://github.com/zoiestar/pm-groundwork"
   },
   "license": "MIT",
   "type": "module",

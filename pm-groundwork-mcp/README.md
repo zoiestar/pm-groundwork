@@ -1,6 +1,6 @@
 # pm-groundwork-mcp
 
-MCP server for [PM Groundwork](https://github.com/zoiestar/pm-groundwork) — cross-tool PM workspace management for Claude Code, Codex CLI, Cursor, and Gemini CLI.
+MCP server for PM Groundwork — cross-tool PM workspace management for Claude Code, Codex CLI, Cursor, and Gemini CLI.
 
 ## Quick start
 
@@ -49,7 +49,7 @@ The server adapts question formatting based on which AI tool connects — intera
 
 ## Documentation
 
-Full docs at [github.com/zoiestar/pm-groundwork](https://github.com/zoiestar/pm-groundwork).
+Full docs in the project README.
 
 ## License
 
