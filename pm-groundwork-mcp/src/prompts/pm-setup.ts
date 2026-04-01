@@ -69,6 +69,36 @@ Store this as TECH_LEVEL (A / B / C). Apply it everywhere:
 
 ---
 
+## Phase 1b — Project scope
+
+This question determines the overall shape of the workspace. Store the
+answer as PROJECT_SCOPE (A / B / C) and use it to branch questions,
+file content, and GSD initialization for the rest of setup.
+
+${q('What are you planning to do with this project?', [
+  { label: 'Documentation only', description: 'PRDs, roadmaps, charters, status reports — no code' },
+  { label: 'Documentation + prototype', description: 'PM docs plus a working proof-of-concept or MVP' },
+  { label: 'Documentation + prototype + full build', description: 'End-to-end: plan it, prototype it, build it, ship it' },
+])}
+
+Store as:
+- **A** (Docs only)
+- **B** (Docs + prototype)
+- **C** (Docs + prototype + full build)
+
+What changes per scope:
+
+| Area | A (Docs only) | B (Docs + prototype) | C (Full build) |
+|------|---------------|---------------------|----------------|
+| GSD framework | Skip | Light — prototype phases only | Full initialization |
+| Git repo question | Optional, framed as backup | Recommended | Expected |
+| Phase 2b questions | Audience, deliverables, review cycle | + Prototype scope, tech stack, success criteria | + Team structure, milestone targets, release plan |
+| MEMORY.md weight | Decisions + stakeholders focused | + Technical context section | Full sections |
+| GSD section in entrypoint | Minimal — mention it exists | Standard routing table | Full routing + milestone tracking |
+| pm-draft emphasis | PRDs, charters, roadmaps, stakeholder comms | + Technical specs, architecture docs | + Launch plans, status reports, retrospectives |
+
+---
+
 ## Phase 2 — Core project interview
 
 Ask each question one at a time so the user can focus. If Phase 0 pre-filled
@@ -102,7 +132,7 @@ ${q('Where are you right now with this project?', [
   { label: 'Wrapping up', description: 'Final stretch — closing out, launching, or handing off' },
 ])}
 
-### Q5 — What Claude should help with
+### Q5 — What the AI should help with
 ${q('What do you want your AI assistant to help with most?', [
   { label: 'Planning and thinking through problems', description: 'Strategy, scoping, trade-offs' },
   { label: 'Tracking decisions and status', description: 'Decision log, progress tracking, memory' },
@@ -153,12 +183,115 @@ If "Yes" — follow up with freeform for the user to list them.
 
 ---
 
+## Phase 2b — Scope-specific questions
+
+Ask these questions based on PROJECT_SCOPE from Phase 1b.
+Skip sections that don't apply.
+
+### Scope A (Docs only) — ask all of these:
+
+#### Q-A1 — Target audience
+${q('Who will read the documents you create?', [
+  { label: 'Executive leadership', description: 'C-suite, VPs — they want summaries and decisions' },
+  { label: 'Cross-functional partners', description: 'Engineering, design, marketing — they want clarity and next steps' },
+  { label: 'External stakeholders', description: 'Clients, vendors, partners — they want professionalism and specifics' },
+  { label: 'Mixed audience', description: 'Different docs for different people' },
+])}
+
+#### Q-A2 — Key deliverables
+${q('What are the main documents you need to produce?', [
+  { label: 'PRD / requirements', description: 'Product requirements or feature specs' },
+  { label: 'Project charter', description: 'Scope, goals, success criteria, governance' },
+  { label: 'Roadmap', description: 'Timeline, milestones, dependencies' },
+  { label: 'Status reports', description: 'Recurring updates for stakeholders' },
+], true)}
+
+#### Q-A3 — Review cycle
+${q('How often do you review and update project docs?', [
+  { label: 'Weekly', description: 'Regular cadence — status reports, priority updates' },
+  { label: 'Biweekly', description: 'Every two weeks — sprint-aligned or check-in based' },
+  { label: 'Ad hoc', description: 'When things change — no fixed schedule' },
+  { label: 'Monthly', description: 'Monthly reviews or steering committee cadence' },
+])}
+
+### Scope B (Docs + prototype) — ask Scope A questions, then add:
+
+#### Q-B1 — Prototype goal
+${q("What's the prototype meant to prove?", [
+  { label: 'Technical feasibility', description: 'Can we actually build this? Prove the architecture works' },
+  { label: 'User experience', description: 'Does the flow make sense? Get feedback before committing' },
+  { label: 'Stakeholder buy-in', description: 'Show something tangible to get approval or funding' },
+  { label: 'All of the above', description: 'Feasibility + UX + buy-in' },
+])}
+
+#### Q-B2 — Prototype tech stack
+${q('Do you know what tech stack the prototype will use?', [
+  { label: 'Yes, I know', description: "I'll describe it" },
+  { label: 'Team decides', description: "Engineering will pick — I just need to track the decision" },
+  { label: 'Need help choosing', description: "I'd like the AI to help evaluate options" },
+])}
+
+If "Yes, I know" — follow up with freeform for the tech stack.
+
+#### Q-B3 — Prototype success criteria
+${q('How will you know the prototype succeeded?', [
+  { label: 'Other', description: "Describe what 'done' looks like for the prototype" },
+])}
+Freeform — let the user describe success criteria in their own words.
+
+#### Q-B4 — Prototype timeline
+${q("What's the timeline pressure for the prototype?", [
+  { label: 'Tight — days to a week', description: 'Fast and scrappy, cut scope aggressively' },
+  { label: 'Moderate — 2-4 weeks', description: 'Enough time to do it right but not over-engineer' },
+  { label: 'Flexible', description: 'No hard deadline — quality over speed' },
+  { label: 'Fixed date', description: 'I have a specific deadline' },
+])}
+
+If "Fixed date" — follow up with freeform for the date.
+
+### Scope C (Full build) — ask Scope A + B questions, then add:
+
+#### Q-C1 — Team structure
+${q('What does the build team look like?', [
+  { label: 'Solo — just me and AI', description: "I'm wearing all the hats" },
+  { label: 'Small team (2-5)', description: 'Tight group, informal coordination' },
+  { label: 'Medium team (6-15)', description: 'Multiple roles, need structured coordination' },
+  { label: 'Large / cross-functional', description: 'Multiple teams, formal processes' },
+])}
+
+#### Q-C2 — Release strategy
+${q('How do you plan to release?', [
+  { label: 'Single launch', description: 'Build it all, ship it once' },
+  { label: 'Phased rollout', description: 'Release in stages — beta, GA, etc.' },
+  { label: 'Continuous delivery', description: 'Ship as features are ready' },
+  { label: 'Not sure yet', description: "We'll figure this out as we go" },
+])}
+
+#### Q-C3 — Milestone targets
+${q('Do you have key milestones or deadlines already?', [
+  { label: 'Yes, I have dates', description: "I'll list them out" },
+  { label: 'Rough timeline', description: 'I have a general sense but nothing locked in' },
+  { label: 'No dates yet', description: "We'll define milestones during planning" },
+])}
+
+If "Yes, I have dates" — follow up with freeform for milestone list.
+
+#### Q-C4 — Risk appetite
+${q("What's the biggest risk you're watching on this project?", [
+  { label: 'Timeline', description: 'We might not ship on time' },
+  { label: 'Scope creep', description: 'Requirements keep growing' },
+  { label: 'Technical unknowns', description: "We're not sure we can build what's needed" },
+  { label: 'Team / resources', description: 'Not enough people or the wrong skills' },
+])}
+
+---
+
 ## Phase 3 — Derive and confirm
 
 Before generating any files, present a confirmation block showing:
-- Project name, role, status, focus areas
+- Project name, scope, role, status, focus areas
 - List of workspace files to create
-- Optional MEMORY.md sections to activate based on project type
+- Optional MEMORY.md sections to activate based on project type and scope
 - Version control setup
 - Then ask for confirmation before proceeding.
 
@@ -186,7 +319,10 @@ template placeholder text in any file.
 2. **${entrypoint}** — Auto-loaded entrypoint. Contains:
    - Read order: CONTEXT.md → MEMORY.md → USER.md → AGENTS.md
    - Decision review check instruction
-   - GSD framework routing table (if .planning/ exists or will be initialized)
+   - GSD framework section adapted to PROJECT_SCOPE:
+     - Scope A: Minimal — mention GSD exists, link to quick commands
+     - Scope B: Standard routing table focused on prototype phases
+     - Scope C: Full routing table with milestone tracking
    - Session protocol: start with pm-start-session, end with pm-end-session
 
 3. **IDENTITY.md** — Agent name, role, focus areas, mission
@@ -195,9 +331,12 @@ template placeholder text in any file.
 
 5. **USER.md** — User name, role, communication style, tech level, tools, version control, preferences
 
-6. **AGENTS.md** — Behavior rules: session start/during/end protocol, GSD workflow, security rules
+6. **AGENTS.md** — Behavior rules: session start/during/end protocol, GSD workflow (adapted to scope), security rules
 
-7. **MEMORY.md** — Full template with project snapshot, priorities, stakeholders, key decisions, risks, next actions, preferences. Activate optional sections based on project type: [CLIENT], [LAUNCH], [PROGRAM], [OPS]
+7. **MEMORY.md** — Full template with project snapshot, priorities, stakeholders, key decisions, risks, next actions, preferences. Activate optional sections based on project type AND scope:
+   - Always: [CLIENT], [LAUNCH], [PROGRAM], [OPS] (based on project type)
+   - Scope B, C: [PROTOTYPE] — goal, tech stack, success criteria, timeline, assumptions
+   - Scope C only: [BUILD] — team structure, release strategy, milestones, risk
 
 8. **DECISIONS.md** — Decision log template with agent instructions, index table, and entry template. Pre-populate any decisions from Q10.
 
@@ -220,15 +359,38 @@ ${q('Anything I got wrong?', [
 ])}
 
 ### 5b — Summary card
-Show a formatted summary of all files created, active sections, version control status.
+Show a formatted summary of all files created, project scope, active sections, version control status.
 
-### 5c — GSD initialization (optional)
-If GSD framework is available, offer to initialize it. Pre-fill everything from the confirmed context.
+### 5c — GSD initialization
+
+Adapt based on PROJECT_SCOPE:
+
+- **Scope A (Docs only):** Skip GSD. Show: "GSD is available if you need structured planning later. Run the project planning command any time to set it up." Proceed to 5d.
+
+- **Scope B or C:** Present the GSD context handoff. Show everything collected during setup that maps to GSD needs:
+  - "What you're building" (Q2), status (Q4), project type (Q9)
+  - Prototype context (Q-B1 through Q-B4) for Scope B, C
+  - Build context (Q-C1 through Q-C4) for Scope C
+  - Stakeholders (Q6), tools (Q7), decisions (Q10), git config (Q8)
+
+Then confirm the handoff:
+
+${q('Does this look right to hand off to GSD?', [
+  { label: 'Yes, looks good', description: "GSD will use all of this — you'll only answer new questions" },
+  { label: 'I need to fix something', description: "I'll tell you what's off" },
+  { label: 'Add more context', description: 'I have more details GSD should know' },
+])}
+
+Then offer GSD initialization:
 
 ${q('Ready to initialize GSD? This sets up the planning framework so all project planning commands work.', [
-  { label: "Yes, let's do it", description: "I'll pre-fill everything I can so you don't repeat yourself" },
+  { label: "Yes, let's do it", description: "You'll only see questions GSD needs that we didn't already cover" },
   { label: 'Skip for now', description: 'You can initialize the planning framework any time later' },
 ])}
+
+If yes: invoke GSD new-project. Pre-fill all overlapping answers from setup context.
+Never re-ask: project description, git tracking, codebase detection, or deep context questions.
+Only let through: workflow config (mode, granularity, execution model), agent config (research, verification, model profile), requirements scoping, and roadmap review.
 
 ### 5d — Manual steps checklist
 Show next steps: daily workflow commands, git verification, any pending setup.

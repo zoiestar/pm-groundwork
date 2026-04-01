@@ -19,6 +19,8 @@ start a new chat, you're starting from zero — re-explaining the project,
 the stakeholders, the decisions already made, the things that matter.
 
 PM Groundwork fixes that. Run the setup once when you start a project.
+It asks about your project scope — documentation only, docs + prototype,
+or docs + prototype + full build — and tailors everything to match.
 From then on, your AI reads workspace files at the start of every session
 and picks up exactly where you left off.
 
@@ -109,7 +111,9 @@ cd /path/to/your/project
 claude
 ```
 
-Then type `/pm-setup` and follow the interactive interview.
+Then type `/pm-setup` and follow the interactive interview. Setup will ask
+about your project scope — docs only, docs + prototype, or full build — and
+tailor every question, file, and GSD integration to match.
 
 ---
 
@@ -235,12 +239,16 @@ to `.gitignore` so they aren't committed to your repo.
 
 ### Optional MEMORY.md sections
 
+Activated based on project type and scope during setup:
+
 | Section | Activated when |
 |---------|---------------|
-| `[CLIENT]` Client context | Client-facing deliverable |
-| `[LAUNCH]` Launch tracker | Product launch / go-to-market |
-| `[PROGRAM]` Dependencies map | Cross-functional program |
-| `[OPS]` Process/tooling context | Internal ops or tooling project |
+| `[PROTOTYPE]` Prototype context | Scope: docs + prototype, or full build |
+| `[BUILD]` Build context | Scope: full build only |
+| `[CLIENT]` Client context | Project type: client-facing deliverable |
+| `[LAUNCH]` Launch tracker | Project type: product launch / go-to-market |
+| `[PROGRAM]` Dependencies map | Project type: cross-functional program |
+| `[OPS]` Process/tooling context | Project type: internal ops or tooling |
 
 ---
 
@@ -374,9 +382,15 @@ say yes, it pre-fills interview answers from what it finds — you just
 confirm or change each one instead of typing from scratch.
 
 **Do I have to use GSD for everything?**
-No. GSD is optional and only available in Claude Code. It powers structured
-work (milestones, phases, execution plans), but PM Groundwork works fine
-without it.
+No. GSD is optional and only available in Claude Code. If you pick "docs only"
+during setup, GSD is skipped entirely. For "docs + prototype" it's offered
+with lighter defaults. For "full build" it's fully initialized. PM Groundwork
+works fine without GSD regardless of scope.
+
+**What's the difference between the three project scopes?**
+- **Documentation only** — PM docs, decision tracking, stakeholder management. No code, no GSD.
+- **Documentation + prototype** — Everything above, plus prototype planning with tech stack, success criteria, and timeline tracking. GSD is offered for prototype phase management.
+- **Documentation + prototype + full build** — Full end-to-end: docs, prototype, team coordination, release planning, milestone tracking. Full GSD initialization with all features.
 
 **Will my workspace files be committed to git?**
 Not by default. Setup offers to add all workspace files to `.gitignore`

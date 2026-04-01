@@ -87,6 +87,36 @@ Store this as TECH_LEVEL (A / B / C). Apply it everywhere:
 
 ---
 
+## Phase 1b — Project scope
+
+This question determines the overall shape of the workspace. Store the
+answer as PROJECT_SCOPE (A / B / C) and use it to branch questions,
+file content, and GSD initialization for the rest of setup.
+
+**Question:** "What are you planning to do with this project?"
+**Options:**
+- "Documentation only" → "PRDs, roadmaps, charters, status reports — no code"
+- "Documentation + prototype" → "PM docs plus a working proof-of-concept or MVP"
+- "Documentation + prototype + full build" → "End-to-end: plan it, prototype it, build it, ship it"
+
+Store as:
+- **A** (Docs only)
+- **B** (Docs + prototype)
+- **C** (Docs + prototype + full build)
+
+### What changes per scope
+
+| Area | A (Docs only) | B (Docs + prototype) | C (Full build) |
+|------|---------------|---------------------|----------------|
+| GSD framework | Skip — offer `/gsd:new-project` later if needed | Light — prototype phases only | Full initialization |
+| Git repo question | Optional, framed as backup | Recommended | Expected |
+| Phase 2b questions | Audience, deliverables, review cycle | + Prototype scope, tech stack, success criteria | + Team structure, milestone targets, release plan |
+| MEMORY.md weight | Decisions + stakeholders focused | + Technical context section | Full sections |
+| CLAUDE.md GSD section | Minimal — mention it exists, link to docs | Standard routing table | Full routing + milestone tracking |
+| pm-draft emphasis | PRDs, charters, roadmaps, stakeholder comms | + Technical specs, architecture docs | + Launch plans, status reports, retrospectives |
+
+---
+
 ## Phase 2 — Core project interview
 
 Ask each question using AskUserQuestion. Go one at a time so the user
@@ -182,6 +212,109 @@ If "Yes" — follow up with freeform for the user to list them.
 
 ---
 
+## Phase 2b — Scope-specific questions
+
+Ask these questions based on PROJECT_SCOPE from Phase 1b.
+Skip sections that don't apply — never ask questions from a scope
+the user didn't select.
+
+### Scope A (Docs only) — ask all of these:
+
+#### Q-A1 — Target audience
+**Question:** "Who will read the documents you create?"
+**Options:**
+- "Executive leadership" → "C-suite, VPs — they want summaries and decisions"
+- "Cross-functional partners" → "Engineering, design, marketing — they want clarity and next steps"
+- "External stakeholders" → "Clients, vendors, partners — they want professionalism and specifics"
+- "Mixed audience" → "Different docs for different people"
+
+#### Q-A2 — Key deliverables
+**Question:** "What are the main documents you need to produce?"
+**Options (multiSelect: true):**
+- "PRD / requirements" → "Product requirements or feature specs"
+- "Project charter" → "Scope, goals, success criteria, governance"
+- "Roadmap" → "Timeline, milestones, dependencies"
+- "Status reports" → "Recurring updates for stakeholders"
+
+#### Q-A3 — Review cycle
+**Question:** "How often do you review and update project docs?"
+**Options:**
+- "Weekly" → "Regular cadence — status reports, priority updates"
+- "Biweekly" → "Every two weeks — sprint-aligned or check-in based"
+- "Ad hoc" → "When things change — no fixed schedule"
+- "Monthly" → "Monthly reviews or steering committee cadence"
+
+### Scope B (Docs + prototype) — ask Scope A questions, then add:
+
+#### Q-B1 — Prototype goal
+**Question:** "What's the prototype meant to prove?"
+**Options:**
+- "Technical feasibility" → "Can we actually build this? Prove the architecture works"
+- "User experience" → "Does the flow make sense? Get feedback before committing"
+- "Stakeholder buy-in" → "Show something tangible to get approval or funding"
+- "All of the above" → "Feasibility + UX + buy-in"
+
+#### Q-B2 — Prototype tech stack
+**Question:** "Do you know what tech stack the prototype will use?"
+**Options:**
+- "Yes, I know" → "I'll describe it"
+- "Team decides" → "Engineering will pick — I just need to track the decision"
+- "Need help choosing" → "I'd like Claude to help evaluate options"
+
+If "Yes, I know" — follow up with freeform for the tech stack.
+
+#### Q-B3 — Prototype success criteria
+**Question:** "How will you know the prototype succeeded?"
+Freeform — use AskUserQuestion with a prompt like:
+"Describe what 'done' looks like for the prototype — e.g., 'users can complete the signup flow' or 'API handles 100 req/s'"
+
+#### Q-B4 — Prototype timeline
+**Question:** "What's the timeline pressure for the prototype?"
+**Options:**
+- "Tight — days to a week" → "Fast and scrappy, cut scope aggressively"
+- "Moderate — 2-4 weeks" → "Enough time to do it right but not over-engineer"
+- "Flexible" → "No hard deadline — quality over speed"
+- "Fixed date" → "I have a specific deadline"
+
+If "Fixed date" — follow up with freeform for the date.
+
+### Scope C (Full build) — ask Scope A + B questions, then add:
+
+#### Q-C1 — Team structure
+**Question:** "What does the build team look like?"
+**Options:**
+- "Solo — just me and Claude" → "I'm wearing all the hats"
+- "Small team (2-5)" → "Tight group, informal coordination"
+- "Medium team (6-15)" → "Multiple roles, need structured coordination"
+- "Large / cross-functional" → "Multiple teams, formal processes"
+
+#### Q-C2 — Release strategy
+**Question:** "How do you plan to release?"
+**Options:**
+- "Single launch" → "Build it all, ship it once"
+- "Phased rollout" → "Release in stages — beta, GA, etc."
+- "Continuous delivery" → "Ship as features are ready"
+- "Not sure yet" → "We'll figure this out as we go"
+
+#### Q-C3 — Milestone targets
+**Question:** "Do you have key milestones or deadlines already?"
+**Options:**
+- "Yes, I have dates" → "I'll list them out"
+- "Rough timeline" → "I have a general sense but nothing locked in"
+- "No dates yet" → "We'll define milestones during planning"
+
+If "Yes, I have dates" — follow up with freeform for milestone list.
+
+#### Q-C4 — Risk appetite
+**Question:** "What's the biggest risk you're watching on this project?"
+**Options:**
+- "Timeline" → "We might not ship on time"
+- "Scope creep" → "Requirements keep growing"
+- "Technical unknowns" → "We're not sure we can build what's needed"
+- "Team / resources" → "Not enough people or the wrong skills"
+
+---
+
 ## Phase 3 — Derive and confirm
 
 Before generating any files, present a confirmation block:
@@ -189,6 +322,7 @@ Before generating any files, present a confirmation block:
 > Here's what I'm going to build for you:
 >
 > **Project:** [NAME]
+> **Scope:** [Docs only / Docs + prototype / Docs + prototype + full build]
 > **Your role:** [ROLE]
 > **Status:** [STATUS]
 > **Claude's main focus:** [FOCUS]
@@ -288,8 +422,32 @@ Flag before doing anything else.
 
 ## GSD Framework
 
-This project uses the GSD (Get Shit Done) framework for all structured work.
-GSD commands are available and should be used proactively.
+<!-- Adapt this section based on PROJECT_SCOPE:
+     - Scope A (Docs only): Use the MINIMAL version below
+     - Scope B (Docs + prototype): Use the STANDARD version below
+     - Scope C (Full build): Use the FULL version below
+-->
+
+<!-- SCOPE A (Docs only) — use this version: -->
+GSD (Get Shit Done) is available if you need structured planning later.
+Run `/gsd:new-project` to initialize it. For now, focus on documents
+and decisions — use `/gsd:quick` or `/gsd:fast` for one-off tasks.
+
+<!-- SCOPE B (Docs + prototype) — use this version: -->
+This project uses GSD for prototype planning and execution.
+
+| Situation | Command |
+|-----------|---------|
+| Plan the prototype | `/gsd:new-project` → `/gsd:discuss-phase` |
+| Execute prototype work | `/gsd:execute-phase` |
+| Quick task (no planning needed) | `/gsd:quick` or `/gsd:fast` |
+| Check progress | `/gsd:progress` or `/gsd:next` |
+| Resuming after a break | `/gsd:resume-work` |
+| End of session | `/pm-end-session` |
+
+<!-- SCOPE C (Full build) — use this version: -->
+This project uses GSD for all structured work — planning, prototyping,
+building, and shipping.
 
 ### When to use GSD
 
@@ -305,6 +463,8 @@ GSD commands are available and should be used proactively.
 | Resuming after a break | `/gsd:resume-work` |
 | Debugging an issue | `/gsd:debug` |
 | End of session | `/pm-end-session` (handles GSD state sync) |
+
+<!-- END SCOPE VARIANTS — include the shared sections below for Scope B and C only: -->
 
 ### Before any GSD planning command
 
@@ -547,7 +707,41 @@ Claude rewrites this as the project evolves.]
 
 ---
 
-<!-- OPTIONAL SECTIONS — activated during /pm-setup based on project type -->
+<!-- OPTIONAL SECTIONS — activated during /pm-setup based on project type and scope -->
+
+---
+
+## [PROTOTYPE] Prototype context
+<!-- Activate for PROJECT_SCOPE B or C -->
+
+**Prototype goal:** [from Q-B1 — feasibility / UX / buy-in / all]
+**Tech stack:** [from Q-B2, or "TBD — team decides"]
+**Success criteria:** [from Q-B3]
+**Timeline:** [from Q-B4]
+**Current status:** Not started
+
+### Key assumptions to validate
+- [Claude populates from interview context]
+
+### Prototype decisions
+| Date | Decision | Notes |
+|------|----------|-------|
+|      |          |       |
+
+---
+
+## [BUILD] Build context
+<!-- Activate for PROJECT_SCOPE C only -->
+
+**Team structure:** [from Q-C1]
+**Release strategy:** [from Q-C2]
+**Key milestones:** [from Q-C3]
+**Biggest risk:** [from Q-C4]
+
+### Milestone tracker
+| Milestone | Target date | Status | Notes |
+|-----------|-------------|--------|-------|
+|           |             |        |       |
 
 ---
 
@@ -801,8 +995,12 @@ Files created:
   DECISIONS.md    ✓   .gitignore      ✓
   memory/[date]   ✓
 
+Project scope:      [Docs only / Docs + prototype / Full build]
+
 Active MEMORY.md sections:
   Core sections       ✓ (always on)
+  [PROTOTYPE] context [✓ / — — Scope B and C]
+  [BUILD] context     [✓ / — — Scope C only]
   [CLIENT] context    [✓ / —]
   [LAUNCH] tracker    [✓ / —]
   [PROGRAM] deps map  [✓ / —]
@@ -815,70 +1013,171 @@ Decisions logged:   [N]
 
 ### 5c — GSD initialization
 
-After showing the summary card, prepare for GSD by reviewing what you already know.
+Adapt this step based on PROJECT_SCOPE:
 
-**Step 1 — Gather context from workspace files**
+- **Scope A (Docs only):** Skip GSD entirely. Instead, show:
+  > GSD framework is available if you ever need structured planning.
+  > Run `/gsd:new-project` any time to set it up.
+  Then proceed directly to 5d.
 
-Before asking the user anything new, read every file you just created:
-- CONTEXT.md, MEMORY.md, USER.md, IDENTITY.md, DECISIONS.md
-- Any existing project files found in Phase 0 (README, specs, briefs, etc.)
+- **Scope B (Docs + prototype):** Offer GSD framed around the prototype.
+- **Scope C (Full build):** Offer full GSD initialization.
 
-Extract and organize everything relevant to GSD project setup:
-- Project name, description, and goals
-- Current status and priorities
-- Stakeholders and their roles
-- Decisions already made
-- Tools and constraints
-- Risks and blockers
+**For Scope B and C, continue with the steps below.**
+
+---
+
+**Step 1 — Build the GSD context handoff**
+
+Before asking the user anything new, assemble everything pm-setup already
+collected into a structured handoff. This is the bridge between pm-setup
+and GSD — it prevents every overlap question from being re-asked.
+
+**Context mapping — what pm-setup already knows vs. what GSD needs:**
+
+| GSD needs | pm-setup source | Notes |
+|-----------|----------------|-------|
+| "What do you want to build?" | Q2 (description) | Direct answer — use verbatim |
+| Project context | Q2 + Q4 (status) + Q9 (type) + Q10 (decisions) | Combine into project narrative |
+| Tech stack | Q-B2 (prototype tech stack) | Scope B, C — pass if answered |
+| Success criteria | Q-B3 (prototype success criteria) | Scope B, C |
+| Timeline pressure | Q-B4 (prototype timeline) | Scope B, C |
+| Team structure | Q-C1 (team structure) | Scope C only |
+| Release strategy | Q-C2 (release strategy) | Scope C only |
+| Milestones / deadlines | Q-C3 (milestone targets) | Scope C only |
+| Key risks | Q-C4 (biggest risk) | Scope C only |
+| Git tracking | Q8 (git repo) | Yes → recommend "commit planning docs"; No → recommend "keep local-only" |
+| Existing code | Phase 0 (file scan) | If code found → recommend codebase mapping |
+| Stakeholders | Q6 (key stakeholders) | Feeds PROJECT.md context |
+| Tools | Q7 (tools in use) | Feeds PROJECT.md context |
+
+**GSD questions that are genuinely new (pm-setup does NOT cover these):**
+
+| GSD question | Why it's new | Scope B default | Scope C default |
+|-------------|-------------|-----------------|-----------------|
+| Mode (YOLO vs Interactive) | GSD workflow preference | Ask | Ask |
+| Granularity (coarse/standard/fine) | Phase sizing | Recommend coarse (3-5 phases) | Ask |
+| Execution model (parallel vs sequential) | Agent behavior | Recommend sequential | Ask |
+| Research before planning? | Token/time trade-off | Recommend yes | Ask |
+| Plan verification? | Quality gate | Recommend yes | Ask |
+| Phase verification? | Quality gate | Recommend yes | Ask |
+| Model profile | Cost trade-off | Recommend balanced | Ask |
+| Requirements scoping (feature selection) | Feature-by-feature v1 scope | Fully new — always ask | Fully new — always ask |
+
+---
 
 **Step 2 — Present what you know and confirm**
 
-Show the user a summary of what you gathered:
+Show the user a single confirmation block with everything GSD will receive
+from pm-setup. This is their chance to correct before GSD starts.
 
-> Before we initialize GSD, here's what I already know from setup —
-> I want to make sure this is right before we move forward:
+> Before we initialize GSD, here's everything I'll pass along from
+> our setup conversation so you don't have to repeat yourself:
 >
-> **Project:** [name]
-> **Description:** [what it is, who it's for]
-> **Current status:** [where things stand]
-> **Key stakeholders:** [names and roles]
-> **Priorities:**
-> 1. [priority 1]
-> 2. [priority 2]
-> 3. [priority 3]
-> **Decisions already locked in:** [list or "none yet"]
-> **Tools:** [stack]
-> **Risks / blockers:** [list or "none identified"]
+> **What you're building:** [Q2 answer — verbatim]
+> **Current status:** [Q4 answer]
+> **Project type:** [Q9 answer]
 >
-Then use AskUserQuestion:
-
-**Question:** "Is this accurate?"
-**Options:**
-- "Yes, that's right" → "Use this context for GSD setup"
-- "I need to correct something" → "I'll tell you what's off"
-- "Add more context" → "I have additional details to share"
-
-**Wait for the user to confirm or correct before proceeding.**
-Apply any corrections immediately — update the workspace files if needed.
-
-**Step 3 — Initialize GSD**
-
-Once confirmed, ask:
+> [Scope B, C only:]
+> **Prototype goal:** [Q-B1 — what it's meant to prove]
+> **Tech stack:** [Q-B2 answer or "TBD — team decides"]
+> **Success criteria:** [Q-B3 answer]
+> **Timeline:** [Q-B4 answer]
+>
+> [Scope C only:]
+> **Team:** [Q-C1 answer]
+> **Release strategy:** [Q-C2 answer]
+> **Milestones:** [Q-C3 answer]
+> **Biggest risk:** [Q-C4 answer]
+>
+> **Also passing along:** stakeholders from Q6, tools from Q7,
+> decisions from Q10, git config from Q8.
+>
+> **GSD will still ask you about:** workflow mode, phase granularity,
+> execution model, agent settings, and v1 feature scoping —
+> these are GSD-specific and weren't covered in setup.
 
 Use AskUserQuestion:
 
-**Question:** "Ready to initialize GSD? This sets up the planning framework so all /gsd commands work."
+**Question:** "Does this look right to hand off to GSD?"
 **Options:**
-- "Yes, let's do it" → "I'll pre-fill everything I can so you don't repeat yourself"
+- "Yes, looks good" → "GSD will use all of this — you'll only answer new questions"
+- "I need to fix something" → "I'll tell you what's off"
+- "Add more context" → "I have more details GSD should know"
+
+**Wait for confirmation.** Apply any corrections to workspace files immediately.
+
+---
+
+**Step 3 — Initialize GSD with pre-filled context**
+
+Once confirmed, ask:
+
+**Question:** "Ready to initialize GSD?"
+**Options:**
+- "Yes, let's do it" → "You'll only see questions GSD needs that we didn't already cover"
 - "Skip for now" → "You can run /gsd:new-project any time later"
 
-If the user says yes:
-- Invoke `/gsd:new-project`
-- When GSD asks questions you already have answers to, provide them
-  from the confirmed context rather than re-asking the user
-- If GSD asks something genuinely new that wasn't covered in setup,
-  let it ask — but flag to the user: "This one's new — GSD needs
-  to know [topic] and we didn't cover it during setup."
+If the user says yes, invoke `/gsd:new-project` with these rules:
+
+**Pre-fill rules (NEVER re-ask these):**
+
+1. **"What do you want to build?"** — Answer with Q2 response. Do not
+   re-ask. If GSD probes deeper ("What excited you about this?", "What
+   problem sparked this?"), answer from the combined context of Q2, Q4,
+   Q9, Q-B1 (if available), and Q10. Only surface a follow-up to the
+   user if GSD asks something genuinely not answerable from setup context.
+
+2. **Git tracking** — If Q8 = "Yes" (existing or new repo), pre-select
+   "Yes, commit planning docs." If Q8 = "No", pre-select "No, keep
+   local-only." Do not re-ask.
+
+3. **Brownfield detection** — If Phase 0 found existing code files,
+   pre-answer "Map codebase first." If Phase 0 found no code, skip
+   the brownfield question entirely. Do not re-ask.
+
+4. **Deep questioning / "Keep exploring" loop** — Use the full context
+   from Q2, Q4, Q6, Q7, Q9, Q10, and all scope-specific answers (Q-B1
+   through Q-C4) to satisfy GSD's context-gathering questions. When
+   GSD reaches "I think I understand what you're after — ready to
+   create PROJECT.md?", select "Create PROJECT.md" unless the assembled
+   context is clearly insufficient. Do not loop back to the user for
+   context that was already provided.
+
+5. **PROJECT.md generation** — Ensure all pm-setup context flows into
+   the generated PROJECT.md:
+   - Project description ← Q2
+   - Current status ← Q4
+   - Stakeholders ← Q6
+   - Tools ← Q7
+   - Project type ← Q9
+   - Locked-in decisions ← Q10
+   - Prototype context ← Q-B1, Q-B2, Q-B3, Q-B4 (Scope B, C)
+   - Build context ← Q-C1, Q-C2, Q-C3, Q-C4 (Scope C)
+
+**Let-through rules (DO ask these — they're genuinely new):**
+
+1. **Workflow config** — Mode, granularity, execution model, git tracking
+   (only if not already determined from Q8). For Scope B, suggest
+   defaults: YOLO mode, coarse granularity, sequential execution.
+   For Scope C, let the user choose.
+
+2. **Agent config** — Research, plan verification, phase verification,
+   model profile. These are GSD-specific quality/cost trade-offs.
+   Brief the user on what each means if TECH_LEVEL is B or C.
+
+3. **Requirements scoping** — Feature-by-feature v1 selection. This is
+   always new and always necessary. Let GSD run this fully.
+
+4. **Roadmap review** — Phase breakdown approval. Always let the user
+   review and adjust.
+
+**Flagging rule:** If GSD asks something that overlaps with setup but
+the setup answer doesn't fully satisfy it, show the user:
+> "GSD is asking about [topic]. From setup, I have: '[setup answer]'.
+> Is that sufficient, or do you want to add more detail?"
+
+Do not silently skip — confirm when in doubt.
 
 If the user says skip, note in the daily log that GSD initialization is pending.
 

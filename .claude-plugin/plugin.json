@@ -9,7 +9,7 @@
     "commands": [
       {
         "name": "pm-setup",
-        "description": "Bootstrap a new PM project workspace with an interactive interview. Creates all management files, initializes decision logging, sets up GSD framework, and tailors everything to your project and working style."
+        "description": "Bootstrap a new PM project workspace with an interactive interview. Asks about project scope (docs only, docs + prototype, or full build) and tailors questions, files, GSD integration, and MEMORY.md sections accordingly."
       },
       {
         "name": "pm-start-session",
