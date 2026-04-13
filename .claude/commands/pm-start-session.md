@@ -24,11 +24,25 @@ concise — lead with what matters most, details on request.
 
 ---
 
-## Step 0 — Read workspace files
+## Step 0 — Detect layout and read workspace files
+
+First, detect which workspace layout is in use:
+- Check if `.claude/agents/pm-lead/AGENT.md` exists
+  - If yes → use `.claude/` native paths
+  - If no → use flat root paths (legacy layout)
 
 Read all workspace files silently (do not dump contents to the user).
-Read in this order, skipping any that don't exist:
+Skip any that don't exist.
 
+**Claude Code native layout:**
+1. CLAUDE.md
+2. CONTEXT.md
+3. `.claude/agent-memory/pm-lead/MEMORY.md`
+4. USER.md
+5. `.claude/agent-memory/pm-lead/DECISIONS.md`
+6. `.claude/agents/pm-lead/AGENT.md`
+
+**Flat layout (legacy):**
 1. CLAUDE.md
 2. CONTEXT.md
 3. MEMORY.md
@@ -72,8 +86,8 @@ git log --oneline -10
 
 ## Step 3 — Check decisions due for review
 
-Scan DECISIONS.md for any entries where Review date ≤ today.
-Collect them for the briefing.
+Scan DECISIONS.md (at the resolved path from Step 0) for any entries
+where Review date ≤ today. Collect them for the briefing.
 
 ---
 

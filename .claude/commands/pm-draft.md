@@ -42,11 +42,25 @@ Rules:
 
 ## Phase 0 — Context Ingestion (silent)
 
-Before asking anything, silently read workspace files to gather context.
+Before asking anything, detect workspace layout and silently read files.
 Use the Read tool for each file that exists. Skip any that don't exist —
 do not error or warn about missing files.
 
-Read in this order:
+**Layout detection:** Check if `.claude/agents/pm-lead/AGENT.md` exists.
+- If yes → use `.claude/` native paths (see below)
+- If no → use flat root paths (legacy layout)
+
+**Claude Code native layout** — read in this order:
+1. `CONTEXT.md` — project description, current state
+2. `.claude/agent-memory/pm-lead/MEMORY.md` — stakeholders, priorities, risks
+3. `USER.md` — user name, role, tech level (A/B/C), tools, preferences
+4. `.claude/agent-memory/pm-lead/DECISIONS.md` — locked-in decisions
+5. `.planning/PROJECT.md` — project definition (if GSD initialized)
+6. `.planning/ROADMAP.md` — milestone/phase structure (if available)
+7. `.planning/STATE.md` — current execution state (if available)
+8. `.claude/agents/pm-lead/AGENT.md` — agent role and communication style
+
+**Flat layout (legacy)** — read in this order:
 1. `CONTEXT.md` — project description, current state
 2. `MEMORY.md` — stakeholders, priorities, risks, decisions summary
 3. `USER.md` — user name, role, tech level (A/B/C), tools, preferences

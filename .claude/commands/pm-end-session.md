@@ -20,7 +20,12 @@ Be thorough but concise — this is a wrap-up, not a deep dive.
 
 ---
 
-## Step 0 — Gather context
+## Step 0 — Detect layout and gather context
+
+First, detect which workspace layout is in use:
+- Check if `.claude/agents/pm-lead/AGENT.md` exists
+  - If yes → use `.claude/` native paths (MEMORY.md at `.claude/agent-memory/pm-lead/MEMORY.md`, DECISIONS.md at `.claude/agent-memory/pm-lead/DECISIONS.md`)
+  - If no → use flat root paths (legacy layout)
 
 Read CLAUDE.md to orient yourself, then check USER.md "Version control" field.
 
@@ -103,7 +108,9 @@ If nothing changed: "No GSD state changes this session."
 
 ## Step 3 — Decisions log
 
-If decisions were made this session, append to DECISIONS.md:
+If decisions were made this session, append to DECISIONS.md (at the resolved
+path from Step 0 — `.claude/agent-memory/pm-lead/DECISIONS.md` for native
+layout, or root `DECISIONS.md` for flat layout):
 ```markdown
 ### #[NEXT ID] — [Short decision title]
 
@@ -137,7 +144,7 @@ If decisions were made this session, append to DECISIONS.md:
 **Review date:** YYYY-MM-DD
 ```
 
-Then add a one-liner to MEMORY.md Key decisions table:
+Then add a one-liner to MEMORY.md (at the resolved path) Key decisions table:
 ```
 | YYYY-MM-DD | [One sentence summary] | [#00X] |
 ```
@@ -161,8 +168,8 @@ plus MEMORY.md are what Claude reads at the start of every session.
 
 ## Step 5 — Workspace docs sync
 
-Update MEMORY.md only if meaningful new facts emerged (new stakeholder,
-new constraint, completed milestone, changed status).
+Update MEMORY.md (at resolved path) only if meaningful new facts emerged
+(new stakeholder, new constraint, completed milestone, changed status).
 
 Update CONTEXT.md only if the project's current state meaningfully shifted.
 
