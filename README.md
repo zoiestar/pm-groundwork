@@ -97,8 +97,9 @@ planning capabilities when it's installed.
 ```bash
 cd /path/to/your/project
 git clone https://github.com/zoiestar/pm-groundwork .groundwork
-mkdir -p .claude/commands
+mkdir -p .claude/commands .claude/skills
 cp .groundwork/.claude/commands/*.md .claude/commands/
+cp -r .groundwork/.claude/skills/* .claude/skills/
 ```
 
 **Verify:** Start Claude Code and type `/pm-` — all four commands should
@@ -111,9 +112,24 @@ cd /path/to/your/project
 claude
 ```
 
-Then type `/pm-setup` and follow the interactive interview. Setup will ask
-about your project scope — docs only, docs + prototype, or full build — and
-tailor every question, file, and GSD integration to match.
+Then type `/pm-setup` and follow the interactive interview.
+
+Setup runs in five phases:
+
+1. **File scan** — Checks for existing project files (README, docs, specs).
+   If found, offers to pre-fill interview answers from what it finds.
+2. **Core interview** — Asks your technical comfort level, project scope
+   (docs only, docs + prototype, or full build), then 10 core questions
+   about the project. Scope-specific follow-up questions are added based
+   on your selection (3 extra for docs, 4 more for prototype, 4 more for
+   full build).
+3. **Confirm** — Shows a "here's what I know" summary of everything it
+   derived from your answers. You confirm or correct before anything is
+   generated.
+4. **Generate files** — Creates all workspace files tailored to your
+   scope and project type.
+5. **Closing** — Recap of what was created, GSD initialization (if
+   applicable), and a checklist of any manual steps.
 
 ---
 
@@ -213,6 +229,9 @@ Your AI reads your workspace context, asks what type of document you need,
 gathers targeted details, and generates a polished first draft. Supports
 14 document types across product, project, and program management.
 
+In Claude Code, pm-draft also runs as an isolated skill (`context: fork`),
+which keeps the drafting work separate from your main conversation context.
+
 That's it — four commands total: setup once, start and end every session,
 draft when you need a document.
 
@@ -223,32 +242,66 @@ draft when you need a document.
 All workspace files are local to your machine. Setup will offer to add them
 to `.gitignore` so they aren't committed to your repo.
 
+### Claude Code (v2 native layout)
+
+Setup generates files into Claude Code's native `.claude/` directory structure:
+
 | File | What it does |
 |------|-------------|
-| `CLAUDE.md` / `GEMINI.md` / `AGENTS.md` | Auto-loaded entrypoint (tool-specific) — session protocol, command routing, file reading order |
+| `CLAUDE.md` | Lightweight entrypoint — points to `.claude/` structure, scope-aware GSD routing |
 | `USER.md` | Your context, role, tools, and working preferences |
-| `MEMORY.md` | Persistent project knowledge — stakeholders, priorities, risks, decisions summary |
-| `DECISIONS.md` | Full decision log with rationale, alternatives, and review dates |
 | `CONTEXT.md` | Quick orientation summary read at the start of every session |
+| `.claude/agents/pm-lead/AGENT.md` | Agent definition — role, mission, and project context |
+| `.claude/agent-memory/pm-lead/MEMORY.md` | Persistent project knowledge — stakeholders, priorities, risks, decisions summary |
+| `.claude/agent-memory/pm-lead/DECISIONS.md` | Full decision log with rationale, alternatives, and review dates |
+| `.claude/rules/communication.md` | Communication style, calibrated to your project type |
+| `.claude/rules/session-protocol.md` | Session maintenance routine |
+| `.claude/rules/behavior.md` | Workflow behavior rules — what to read, when, and how to act |
+| `.claude/rules/security.md` | Project-level security guardrails (optional if global rules exist) |
+| `.claude/skills/pm-draft/SKILL.md` | Document drafter as isolated skill (`context: fork`) |
+| `.claude/settings.json` | Project-level permissions (scope-aware) |
+| `.mcp.json` | MCP server configuration |
+| `memory/` | Daily session logs — one file per day, auto-created |
+| `.planning/` | GSD planning artifacts — roadmap, state, phase plans (if GSD installed) |
+
+### Other tools (MCP server layout)
+
+When using the MCP server with Cursor, Codex, or Gemini CLI, setup creates
+flat root-level files instead:
+
+| File | What it does |
+|------|-------------|
+| `GEMINI.md` / `AGENTS.md` | Auto-loaded entrypoint (tool-specific) |
+| `USER.md` | Your context, role, tools, and working preferences |
+| `MEMORY.md` | Persistent project knowledge |
+| `DECISIONS.md` | Full decision log with rationale, alternatives, and review dates |
+| `CONTEXT.md` | Quick orientation summary |
 | `IDENTITY.md` | AI agent's role and mission on this specific project |
 | `SOUL.md` | Communication style, calibrated to your project type |
 | `HEARTBEAT.md` | Session maintenance routine |
 | `AGENTS.md` | Behavior rules — what to read, when, and how to act |
 | `memory/` | Daily session logs — one file per day, auto-created |
-| `.planning/` | GSD planning artifacts — roadmap, state, phase plans (if GSD installed) |
+
+### Backward compatibility
+
+If you set up a project with v1 (flat root files), your existing layout
+still works. The `/pm-start-session` and `/pm-end-session` commands
+auto-detect which layout you're using and resolve file paths accordingly.
 
 ### Optional MEMORY.md sections
 
-Activated based on project type and scope during setup:
+Activated automatically based on your project scope and type selections
+during setup. You can select multiple project types — each activates its
+own section:
 
 | Section | Activated when |
 |---------|---------------|
 | `[PROTOTYPE]` Prototype context | Scope: docs + prototype, or full build |
 | `[BUILD]` Build context | Scope: full build only |
-| `[CLIENT]` Client context | Project type: client-facing deliverable |
-| `[LAUNCH]` Launch tracker | Project type: product launch / go-to-market |
-| `[PROGRAM]` Dependencies map | Project type: cross-functional program |
-| `[OPS]` Process/tooling context | Project type: internal ops or tooling |
+| `[CLIENT]` Client context | Project type includes: client-facing deliverable |
+| `[LAUNCH]` Launch tracker | Project type includes: product launch / go-to-market |
+| `[PROGRAM]` Dependencies map | Project type includes: cross-functional program |
+| `[OPS]` Process/tooling context | Project type includes: internal ops or tooling |
 
 ---
 
@@ -328,6 +381,7 @@ You can also select "Something else" to draft a custom document type.
 
 ```
 /pm-start-session (or pm-start-session MCP prompt)
+  → Auto-detects workspace layout (v2 .claude/ or legacy flat files)
   → Reads all workspace files and project state
   → Briefing: progress, what's next, risks, decisions due
   → Helps you pick what to focus on
@@ -339,9 +393,10 @@ Do your work
   → Run /pm-draft when you need a document
 
 /pm-end-session (or pm-end-session MCP prompt)
+  → Auto-detects workspace layout
   → Daily log created in memory/
-  → Project state updated
-  → MEMORY.md and CONTEXT.md synced
+  → Project state and memory synced
+  → Security scan on staged files before commit (checks for credentials)
   → Git backup (if repo configured)
 ```
 
@@ -388,13 +443,30 @@ with lighter defaults. For "full build" it's fully initialized. PM Groundwork
 works fine without GSD regardless of scope.
 
 **What's the difference between the three project scopes?**
-- **Documentation only** — PM docs, decision tracking, stakeholder management. No code, no GSD.
-- **Documentation + prototype** — Everything above, plus prototype planning with tech stack, success criteria, and timeline tracking. GSD is offered for prototype phase management.
-- **Documentation + prototype + full build** — Full end-to-end: docs, prototype, team coordination, release planning, milestone tracking. Full GSD initialization with all features.
+
+Scope is a first-class parameter chosen during setup (Phase 1). It controls
+which questions you're asked, which files are generated, and how GSD is
+initialized:
+
+- **Documentation only** — PM docs, decision tracking, stakeholder management.
+  3 scope-specific questions (audience, deliverables, review cycle). No code,
+  no GSD.
+- **Documentation + prototype** — Everything above, plus 4 prototype questions
+  (goal, tech stack, success criteria, timeline). GSD is offered with lighter
+  defaults for prototype phase management.
+- **Documentation + prototype + full build** — Everything above, plus 4 build
+  questions (team structure, release strategy, milestones, risk appetite).
+  Full GSD initialization with all features.
 
 **Will my workspace files be committed to git?**
 Not by default. Setup offers to add all workspace files to `.gitignore`
 during the interview.
+
+**Can I select more than one project type?**
+Yes. During setup, the project type question (Q9) is "pick all that apply."
+You can select client-facing deliverable, product launch, cross-functional
+program, and/or internal ops — each activates its own optional MEMORY.md
+section so nothing is lost.
 
 **Can multiple people on the same team use this?**
 Yes, but each person runs their own setup in their own local environment.
@@ -402,9 +474,10 @@ Workspace files are per-person, not shared.
 
 **What's the difference between the slash commands and the MCP server?**
 Same workflows, different delivery. The slash commands work in Claude Code
-only and use Claude Code's interactive buttons for questions. The MCP server
-works in any tool that supports MCP and presents questions as numbered lists.
-You only need one — pick whichever matches your tool.
+only and use Claude Code's native `.claude/` directory structure (agents,
+rules, skills). The MCP server works in any tool that supports MCP and
+creates flat root-level workspace files. You only need one — pick whichever
+matches your tool.
 
 **How do I update?**
 
@@ -412,6 +485,7 @@ Slash commands:
 ```bash
 cd .groundwork && git pull
 cp .groundwork/.claude/commands/*.md .claude/commands/
+cp -r .groundwork/.claude/skills/* .claude/skills/
 ```
 
 MCP server:
