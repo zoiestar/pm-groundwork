@@ -2,12 +2,15 @@
 
 The MCP server for [PM Groundwork](https://github.com/zoiestar/pm-groundwork), a starter kit that gives project and product managers an AI assistant that remembers their project between sessions.
 
-This package is for **Cursor, Codex CLI, and Gemini CLI**. If you use Claude Code, Claude Desktop, or Claude Cowork, install the plugin instead — you don't need this:
+This package is for **Cursor, Codex CLI, and Gemini CLI**. If you use Claude Code, Claude Desktop, or Claude Cowork, install the plugin instead — you don't need this package.
 
+**Claude Code:**
 ```
 /plugin marketplace add zoiestar/pm-groundwork
 /plugin install pm-groundwork
 ```
+
+**Claude Desktop or Cowork:** Customize → Plugins → Personal plugins → + → Add marketplace → Add from a repository → `https://github.com/zoiestar/pm-groundwork`. In Cowork, open the Cowork tab first.
 
 ## Quick start
 

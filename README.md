@@ -1,5 +1,8 @@
 # PM Groundwork
 
+[![npm](https://img.shields.io/npm/v/pm-groundwork-mcp?label=pm-groundwork-mcp)](https://www.npmjs.com/package/pm-groundwork-mcp)
+[![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 **Your AI assistant forgets your project every time you close it. PM Groundwork gives it a memory that persists.**
 
 PM Groundwork is a starter kit for project and product managers using AI tools. It sets up a small set of plain markdown files holding your project's memory: status, stakeholders, decisions and why you made them, risks, and a delivery plan. Every session then starts with your assistant already knowing where things stand. From there it helps you run the actual work, whether that's documentation, a prototype, or a full delivery plan.
@@ -43,7 +46,7 @@ GitHub backup has to run on your own machine with your own credentials, which Co
 
 ## Install
 
-### Claude Code, Claude Desktop, or Claude Cowork
+### Claude Code
 
 Two commands, typed into the assistant:
 
@@ -52,13 +55,27 @@ Two commands, typed into the assistant:
 /plugin install pm-groundwork
 ```
 
-The first tells your assistant where to find PM Groundwork. The second installs it. No cloning, no copying files.
+The first tells Claude Code where to find PM Groundwork. The second installs it. No cloning, no copying files.
 
-**Installed once, used per project.** The skills install for *you*, so they're available in every project you open, and you only do this once. The workspace files work the other way round. They live in one project folder and describe only that project. Run `setup` separately in each project you want PM Groundwork to remember. It confirms the folder before writing anything, so you can't scatter a workspace somewhere by accident.
+### Claude Desktop or Claude Cowork
+
+These install through the interface rather than a typed command.
+
+1. **In Cowork**, open the **Cowork** tab first. (In Desktop, skip this step.)
+2. Open **Customize** in the left sidebar.
+3. Go to the **Plugins** tab.
+4. Under **Personal plugins**, click **+** and choose **Add marketplace**.
+5. Choose **Add from a repository** and enter:
+   ```
+   https://github.com/zoiestar/pm-groundwork
+   ```
+6. Install **pm-groundwork** from the marketplace you just added.
+
+The skills then appear in the `/` menu.
 
 ### Cursor, Codex CLI, or Gemini CLI
 
-These connect through an MCP server, a small program that gives your AI tool extra abilities. One command, typed into your terminal, in your project folder:
+These connect through an [MCP server](https://www.npmjs.com/package/pm-groundwork-mcp), a small program that gives your AI tool extra abilities. One command, typed into your terminal, in your project folder:
 
 ```bash
 npx pm-groundwork-mcp init
@@ -90,6 +107,14 @@ command = "npx"
 args = ["-y", "pm-groundwork-mcp"]
 ```
 </details>
+
+---
+
+### Installed once, used per project
+
+However you install it, the skills install for *you* and are available in every project you open. You only do this once.
+
+The workspace files work the other way round. They live in one project folder and describe only that project, so run `setup` separately in each project you want PM Groundwork to remember. It confirms the folder before writing anything, so you can't scatter a workspace somewhere by accident.
 
 ---
 

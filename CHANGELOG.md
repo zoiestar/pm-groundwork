@@ -2,6 +2,8 @@
 
 ## 3.0.0 — 2026-08-19
 
+Published to npm as [`pm-groundwork-mcp`](https://www.npmjs.com/package/pm-groundwork-mcp). Earlier versions were never published, so `npx pm-groundwork-mcp init` — the install the README documented from v1 onward — returned a 404 for everyone who tried it. The MCP path works now.
+
 A rewrite. Commands became skills, the GSD dependency was removed, and the product split into two parts.
 
 ### If you are upgrading
