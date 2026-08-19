@@ -18,7 +18,7 @@
   },
   "type": "module",
   "bin": {
-    "pm-groundwork-mcp": "./dist/index.js"
+    "pm-groundwork-mcp": "dist/index.js"
   },
   "main": "./dist/index.js",
   "files": [
