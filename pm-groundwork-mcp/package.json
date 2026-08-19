@@ -1,19 +1,29 @@
 {
   "name": "pm-groundwork-mcp",
   "version": "3.0.0",
-  "description": "MCP server for PM Groundwork \u2014 cross-tool PM workspace management for Claude Code, Codex, Cursor, and Gemini CLI",
+  "description": "MCP server for PM Groundwork - persistent project memory, decision logging, session rituals, and PM document drafting for Cursor, Codex CLI, and Gemini CLI",
   "author": {
     "name": "Jackie Romero",
     "url": "https://github.com/zoiestar/pm-groundwork"
   },
   "license": "MIT",
+  "homepage": "https://github.com/zoiestar/pm-groundwork#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zoiestar/pm-groundwork.git",
+    "directory": "pm-groundwork-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/zoiestar/pm-groundwork/issues"
+  },
   "type": "module",
   "bin": {
     "pm-groundwork-mcp": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "files": [
-    "dist/"
+    "dist/",
+    "LICENSE"
   ],
   "scripts": {
     "build:prompts": "node scripts/build-prompts.mjs",

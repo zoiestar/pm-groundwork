@@ -14,19 +14,6 @@ interface ToolConfig {
 
 const TOOLS: ToolConfig[] = [
   {
-    name: 'Claude Code',
-    configDir: '.claude',
-    configFile: '.claude/settings.local.json',
-    generate: () => JSON.stringify({
-      mcpServers: {
-        'pm-groundwork': {
-          command: 'npx',
-          args: ['-y', 'pm-groundwork-mcp'],
-        },
-      },
-    }, null, 2),
-  },
-  {
     name: 'Cursor',
     configDir: '.cursor',
     configFile: '.cursor/mcp.json',
@@ -119,8 +106,19 @@ export async function runInit(): Promise<void> {
     }
   }
 
-  // Special: Codex uses TOML in ~/.codex/ (global), not project-level
-  // For now, print instructions rather than modifying global config
+  // Claude Code, Desktop, and Cowork should install the plugin instead — it
+  // ships the skills directly. Configuring this server there would add a second,
+  // redundant path and spawn a Node process every session for no benefit.
+  const claudeDir = join(cwd, '.claude');
+  if (await dirExists(claudeDir)) {
+    console.log('Claude Code detected. You do not need this server —');
+    console.log('install the plugin instead, which includes everything:\n');
+    console.log('  /plugin marketplace add zoiestar/pm-groundwork');
+    console.log('  /plugin install pm-groundwork\n');
+  }
+
+  // Codex uses TOML in ~/.codex/ (global), not project-level, so print
+  // instructions rather than editing a global config file.
   const codexDir = join(cwd, '.codex');
   if (await dirExists(codexDir)) {
     detected.push('Codex CLI');
@@ -134,10 +132,10 @@ export async function runInit(): Promise<void> {
   console.log('--- Summary ---\n');
 
   if (detected.length === 0) {
-    console.log('No AI tool config directories found (.claude/, .cursor/, .gemini/, .codex/).');
-    console.log('Create one first, then re-run: npx pm-groundwork-mcp init\n');
-    console.log('Or manually add the MCP server config to your tool:\n');
-    console.log('  Claude Code:  .claude/settings.local.json');
+    console.log('No supported AI tool found in this folder (.cursor/, .gemini/, .codex/).');
+    console.log('Open this folder in Cursor, Codex CLI, or Gemini CLI once, then re-run:');
+    console.log('  npx pm-groundwork-mcp init\n');
+    console.log('Or add the config manually:\n');
     console.log('  Cursor:       .cursor/mcp.json');
     console.log('  Gemini CLI:   .gemini/settings.json');
     console.log('  Codex CLI:    ~/.codex/config.toml');
@@ -152,7 +150,8 @@ export async function runInit(): Promise<void> {
   }
 
   console.log('\nNext steps:');
-  console.log('1. Start your AI tool — it will auto-connect to pm-groundwork');
-  console.log('2. Use the pm-setup prompt to initialize your PM workspace');
-  console.log('3. Use pm-start-session at the start of each work session');
+  console.log('1. Restart your AI tool so it picks up the new config');
+  console.log('2. Run the pm-setup prompt to build your PM workspace');
+  console.log('3. Run pm-start-session at the start of each working session,');
+  console.log('   and pm-end-session when you finish');
 }
