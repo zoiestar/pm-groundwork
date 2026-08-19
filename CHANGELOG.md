@@ -1,5 +1,14 @@
 # Changelog
 
+## MCP server 3.0.1 — 2026-08-19
+
+Package-only release; the plugin and skills are unchanged at 3.0.0.
+
+- Corrected the package README, which is the npm landing page. It told Claude Desktop and Cowork users to type a slash command; those surfaces install through the Customize panel.
+- Dropped `glob`, which was declared as a dependency but never imported. The package now has exactly one runtime dependency.
+- Updated the MCP SDK to 1.30.0.
+- Documented that this server is stdio-only, so the SDK's HTTP-transport advisories reported by `npm audit` do not apply to code paths it executes.
+
 ## 3.0.0 — 2026-08-19
 
 Published to npm as [`pm-groundwork-mcp`](https://www.npmjs.com/package/pm-groundwork-mcp). Earlier versions were never published, so `npx pm-groundwork-mcp init` — the install the README documented from v1 onward — returned a 404 for everyone who tried it. The MCP path works now.

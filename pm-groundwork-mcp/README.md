@@ -67,6 +67,14 @@ args = ["-y", "pm-groundwork-mcp"]
 
 **Where your data goes: nowhere.** Everything is plain markdown files in your project folder. There is no service behind this.
 
+## Security
+
+This server speaks **stdio only** — it is launched by your AI tool as a local subprocess and never opens a network port.
+
+`npm audit` reports advisories in the Model Context Protocol SDK's HTTP server dependencies (`hono`, `express-rate-limit`, `body-parser`, `qs`). Those are transitive, they belong to the SDK's HTTP transport, and this package does not use that transport — the affected code never runs here. They are reported because npm audits the whole dependency tree, not the code paths you actually execute.
+
+The server reads and writes only inside your workspace directory. Paths that would escape it are rejected.
+
 ## Development
 
 ```bash

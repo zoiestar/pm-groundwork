@@ -1,6 +1,6 @@
 {
   "name": "pm-groundwork-mcp",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "MCP server for PM Groundwork - persistent project memory, decision logging, session rituals, and PM document drafting for Cursor, Codex CLI, and Gemini CLI",
   "author": {
     "name": "Jackie Romero",
@@ -39,8 +39,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1",
-    "glob": "^11.0.0"
+    "@modelcontextprotocol/sdk": "^1.30.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
