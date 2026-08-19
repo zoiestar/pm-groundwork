@@ -1,0 +1,33 @@
+{
+  "name": "pm-groundwork",
+  "owner": {
+    "name": "Jackie Romero",
+    "url": "https://github.com/zoiestar/pm-groundwork"
+  },
+  "metadata": {
+    "description": "A PM starter kit for AI tools — persistent project memory, decision logging, session rituals, and PM document drafting.",
+    "version": "3.0.0"
+  },
+  "plugins": [
+    {
+      "name": "pm-groundwork",
+      "source": "./",
+      "description": "Bootstrap a PM workspace with persistent memory, run a documentation / prototype / full-delivery engagement, and keep context across sessions.",
+      "version": "3.0.0",
+      "author": {
+        "name": "Jackie Romero"
+      },
+      "homepage": "https://github.com/zoiestar/pm-groundwork",
+      "license": "MIT",
+      "keywords": [
+        "pm",
+        "project-management",
+        "program-management",
+        "product-management",
+        "memory",
+        "decisions",
+        "documentation"
+      ]
+    }
+  ]
+}

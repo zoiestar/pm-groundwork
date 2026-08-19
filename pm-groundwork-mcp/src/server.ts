@@ -19,38 +19,47 @@ import { registerCheckDecisionsDue } from './tools/check-decisions-due.js';
 // Resources
 import { registerWorkspaceResources } from './resources/workspace-resources.js';
 
-// Prompts
-import { registerPmSetupPrompt } from './prompts/pm-setup.js';
-import { registerPmStartSessionPrompt } from './prompts/pm-start-session.js';
-import { registerPmEndSessionPrompt } from './prompts/pm-end-session.js';
-import { registerPmDraftPrompt } from './prompts/pm-draft.js';
+// Prompts — generated from skills/, registered by one loop
+import { registerAllPrompts } from './prompts/register.js';
 
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'pm-groundwork',
-    version: '1.0.0',
+    version: '3.0.0',
   });
 
-  // Client capabilities — updated when a client connects
-  let clientCaps: ClientCapabilities = { hasAskUserQuestion: false, toolName: 'unknown' };
-  const getClientInfo = () => clientCaps;
+  // Client capabilities are resolved lazily.
+  //
+  // The MCP handshake means clientInfo does not exist until the client sends
+  // `initialize`, which happens AFTER connect() resolves. Detecting at connect
+  // time always produced 'unknown', which silently served every client —
+  // including Claude Code — the degraded numbered-list prompts with no symptom.
+  let clientCaps: ClientCapabilities | null = null;
+  let reported = false;
 
-  // Store a reference so we can detect client on connection
-  // The MCP SDK provides client info during initialization
-  const originalConnect = server.connect.bind(server);
-  server.connect = async (transport) => {
-    const result = await originalConnect(transport);
-    // Try to detect client from transport or server state
-    // The SDK exposes client info after connection
+  const getClientInfo = (): ClientCapabilities => {
+    if (clientCaps) return clientCaps;
+    let info: { name?: string } | undefined;
     try {
-      const serverAny = server as any;
-      if (serverAny._clientInfo) {
-        clientCaps = detectClient(serverAny._clientInfo);
-      }
+      info = server.server.getClientVersion();
     } catch {
-      // Fall back to unknown
+      info = (server as any)._clientInfo;
     }
-    return result;
+    if (!info) {
+      // Not connected yet — don't cache a guess.
+      return { hasAskUserQuestion: false, toolName: 'unknown' };
+    }
+    clientCaps = detectClient(info);
+    if (!reported) {
+      reported = true;
+      console.error(
+        `[pm-groundwork] client: ${clientCaps.toolName}` +
+          (clientCaps.toolName === 'unknown'
+            ? ` — could not identify "${info.name ?? ''}"; using numbered-list prompts`
+            : '')
+      );
+    }
+    return clientCaps;
   };
 
   // Register all 8 tools
@@ -66,11 +75,8 @@ export function createServer(): McpServer {
   // Register all 5 resources
   registerWorkspaceResources(server);
 
-  // Register all 4 prompts
-  registerPmSetupPrompt(server, getClientInfo);
-  registerPmStartSessionPrompt(server, getClientInfo);
-  registerPmEndSessionPrompt(server, getClientInfo);
-  registerPmDraftPrompt(server, getClientInfo);
+  // Register every prompt generated from skills/
+  registerAllPrompts(server, getClientInfo);
 
   return server;
 }

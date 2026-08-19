@@ -1,529 +1,260 @@
 # PM Groundwork
 
-**A PM starter kit for AI coding tools — Claude Code, Cursor, Codex, and Gemini CLI.**
+**Your AI assistant forgets your project every time you close it. PM Groundwork gives it a memory that persists.**
 
-PM Groundwork gives your AI assistant persistent memory, structured decision
-logging, and a guided setup interview — so every session starts with full
-context and ends with nothing lost.
+PM Groundwork is a starter kit for project and product managers using AI tools. It sets up a small set of plain markdown files holding your project's memory: status, stakeholders, decisions and why you made them, risks, and a delivery plan. Every session then starts with your assistant already knowing where things stand. From there it helps you run the actual work, whether that's documentation, a prototype, or a full delivery plan.
 
-Built for PMs who use AI coding tools and want an agent that actually knows
-their project, remembers their stakeholders, tracks their decisions, and
-gets smarter over time.
+You don't need to write code to use it, or know what a terminal is.
 
 ---
 
-## What problem does this solve?
+## The problem it solves
 
-AI coding tools have no memory between sessions by default. Every time you
-start a new chat, you're starting from zero — re-explaining the project,
-the stakeholders, the decisions already made, the things that matter.
+You explain your project to an AI assistant, have a good session, and close it.
 
-PM Groundwork fixes that. Run the setup once when you start a project.
-It asks about your project scope — documentation only, docs + prototype,
-or docs + prototype + full build — and tailors everything to match.
-From then on, your AI reads workspace files at the start of every session
-and picks up exactly where you left off.
+Next time, it knows nothing. Who the stakeholders are, what you decided last week and why, what's blocked. So you explain it again, and the assistant confidently suggests something you already ruled out for a reason it never learned.
 
-It also gives you a decision log that captures *why* decisions were made,
-not just *what* was decided — which is the thing that actually matters
-six months later when someone asks "why did we do it this way?"
+PM Groundwork writes that context to files your assistant reads at the start of every session and updates at the end. That happens automatically in Claude Code, Desktop, and Cowork. In Cursor, Codex, and Gemini CLI you start a session by running the start-session prompt. The files are yours, in plain markdown, in your project folder. Nothing is locked in a service you can't leave.
 
 ---
 
-## Who this is for
+## Who it's for
 
-- Program managers running cross-functional initiatives
-- Product managers managing launches or roadmaps
-- Project managers delivering client or internal work
-- Operations leads managing process or tooling changes
+- Program, product, and project managers who want AI help without becoming developers
+- Anyone inheriting a messy project who needs the context written down somewhere
+- PMs who make decisions that need to stay explained six months later
 
-You don't need to be a developer. PM Groundwork will ask about your
-technical comfort level during setup and calibrate everything accordingly.
+Not for you if you want an issue tracker or a Jira replacement. This is context and documents, not ticket management.
 
 ---
 
-## Supported tools
+## Where it runs
 
-| Tool | Installation method | Status |
-|------|-------------------|--------|
-| **Claude Code** (terminal) | Slash commands or MCP server | Full support |
-| **Cursor** | MCP server | Full support |
-| **Codex CLI** (OpenAI) | MCP server | Full support |
-| **Gemini CLI** (Google) | MCP server | Full support |
+| Where | Skills | Documents & memory | GitHub backup |
+|---|---|---|---|
+| **Claude Code** | Yes | Yes | Yes |
+| **Claude Desktop** | Yes | Yes | Not available |
+| **Claude Cowork** | Yes | Yes | Not available |
+| **Cursor, Codex CLI, Gemini CLI** | Through the MCP server | Yes | Yes |
 
----
-
-## Getting started
-
-Choose the installation path for your tool.
+GitHub backup has to run on your own machine with your own credentials, which Cowork and Claude Desktop don't allow, because they run in an isolated environment. Everything else works everywhere. Setup checks whether it can actually reach your GitHub account before offering backup, so you're not configured for something that fails later.
 
 ---
 
-### Option A — Claude Code (slash commands)
+## Install
 
-This is the original installation method. It gives you `/pm-setup`,
-`/pm-start-session`, `/pm-end-session`, and `/pm-draft` as slash commands.
+### Claude Code, Claude Desktop, or Claude Cowork
 
-#### Step 1 — Install Claude Code
+Two commands, typed into the assistant:
 
-**macOS / Linux:**
-```bash
-curl -fsSL https://claude.ai/install.sh | bash
+```
+/plugin marketplace add zoiestar/pm-groundwork
+/plugin install pm-groundwork
 ```
 
-**Windows (PowerShell):**
-```powershell
-irm https://claude.ai/install.ps1 | iex
-```
+The first tells your assistant where to find PM Groundwork. The second installs it. No cloning, no copying files.
 
-You'll need a Claude.ai account — Pro plan or higher is recommended.
+**Installed once, used per project.** The skills install for *you*, so they're available in every project you open, and you only do this once. The workspace files work the other way round. They live in one project folder and describe only that project. Run `setup` separately in each project you want PM Groundwork to remember. It confirms the folder before writing anything, so you can't scatter a workspace somewhere by accident.
 
-#### Step 2 — Install the GSD framework (optional)
+### Cursor, Codex CLI, or Gemini CLI
 
-[GSD (Get Shit Done)](https://github.com/gsd-build/get-shit-done) is a
-structured planning and execution framework for Claude Code, created by
-[Lex Christopherson](https://github.com/glittercowboy). It powers the
-`/gsd:*` commands for project planning, phase execution, and progress tracking.
-
-```bash
-npx get-shit-done-cc@latest
-```
-
-GSD is optional — PM Groundwork works without it but offers deeper
-planning capabilities when it's installed.
-
-#### Step 3 — Install PM Groundwork
-
-```bash
-cd /path/to/your/project
-git clone https://github.com/zoiestar/pm-groundwork .groundwork
-mkdir -p .claude/commands .claude/skills
-cp .groundwork/.claude/commands/*.md .claude/commands/
-cp -r .groundwork/.claude/skills/* .claude/skills/
-```
-
-**Verify:** Start Claude Code and type `/pm-` — all four commands should
-appear in autocomplete.
-
-#### Step 4 — Run setup
-
-```bash
-cd /path/to/your/project
-claude
-```
-
-Then type `/pm-setup` and follow the interactive interview.
-
-Setup runs in five phases:
-
-1. **File scan** — Checks for existing project files (README, docs, specs).
-   If found, offers to pre-fill interview answers from what it finds.
-2. **Core interview** — Asks your technical comfort level, project scope
-   (docs only, docs + prototype, or full build), then 10 core questions
-   about the project. Scope-specific follow-up questions are added based
-   on your selection (3 extra for docs, 4 more for prototype, 4 more for
-   full build).
-3. **Confirm** — Shows a "here's what I know" summary of everything it
-   derived from your answers. You confirm or correct before anything is
-   generated.
-4. **Generate files** — Creates all workspace files tailored to your
-   scope and project type.
-5. **Closing** — Recap of what was created, GSD initialization (if
-   applicable), and a checklist of any manual steps.
-
----
-
-### Option B — MCP server (any tool)
-
-The MCP server works with Claude Code, Cursor, Codex CLI, and Gemini CLI.
-It exposes the same PM workflows as tools and prompts via the
-[Model Context Protocol](https://modelcontextprotocol.io/).
-
-#### Step 1 — Run the init command
-
-Navigate to your project and run:
+These connect through an MCP server, a small program that gives your AI tool extra abilities. One command, typed into your terminal, in your project folder:
 
 ```bash
 npx pm-groundwork-mcp init
 ```
 
-This auto-detects which AI tools you have configured (`.claude/`, `.cursor/`,
-`.gemini/`, `.codex/`) and writes the MCP server config for each one.
+`npx` runs a program without permanently installing it. `init` detects which AI tools you have and writes the configuration for them. Restart your tool afterward.
 
-#### Step 2 — Manual config (if init doesn't detect your tool)
+**How to use it once installed.** These tools don't have slash commands, so you reach PM Groundwork through *prompts*. Cursor lists them in the chat input's `/` menu, Codex and Gemini CLI expose them as MCP prompts you select by name. Start with `pm-setup`. If you can't find the menu, asking "run the pm-setup prompt" in plain language usually works too.
 
-**Claude Code** — add to `.claude/settings.local.json`:
+In Claude Code, Desktop, and Cowork your project context loads on its own. In these tools it loads when you run `pm-start-session`, so make that your first step each day.
+
+<details>
+<summary>Manual configuration, if you'd rather do it yourself</summary>
+
+**Cursor** — `.cursor/mcp.json`
 ```json
-{
-  "mcpServers": {
-    "pm-groundwork": {
-      "command": "npx",
-      "args": ["-y", "pm-groundwork-mcp"]
-    }
-  }
-}
+{ "mcpServers": { "pm-groundwork": { "command": "npx", "args": ["-y", "pm-groundwork-mcp"] } } }
 ```
 
-**Cursor** — add to `.cursor/mcp.json`:
+**Gemini CLI** — `.gemini/settings.json`
 ```json
-{
-  "mcpServers": {
-    "pm-groundwork": {
-      "command": "npx",
-      "args": ["-y", "pm-groundwork-mcp"]
-    }
-  }
-}
+{ "mcpServers": { "pm-groundwork": { "command": "npx", "args": ["-y", "pm-groundwork-mcp"] } } }
 ```
 
-**Gemini CLI** — add to `.gemini/settings.json`:
-```json
-{
-  "mcpServers": {
-    "pm-groundwork": {
-      "command": "npx",
-      "args": ["-y", "pm-groundwork-mcp"]
-    }
-  }
-}
-```
-
-**Codex CLI** — add to `~/.codex/config.toml`:
+**Codex CLI** — `~/.codex/config.toml`
 ```toml
 [mcp_servers.pm-groundwork]
 command = "npx"
 args = ["-y", "pm-groundwork-mcp"]
 ```
-
-#### Step 3 — Run setup
-
-Start your AI tool and ask it to run the `pm-setup` prompt. The MCP server
-provides the setup interview, workspace file management, and all PM workflows.
+</details>
 
 ---
 
-### After installation — the daily workflow
+## How it works — two parts
 
-From now on, every session follows this pattern:
+### Part 1: set up the workspace
 
-**Start of session:**
 ```
-/pm-start-session
+/pm-groundwork:setup
 ```
-Your AI reads all workspace files, checks project state, reviews recent
-history, and gives you a structured briefing: what was done, what's next,
-any risks or decisions due. Then it helps you pick what to work on.
 
-**End of session:**
-```
-/pm-end-session
-```
-Your AI updates your daily log, syncs project state, logs any decisions made,
-and backs up to git if configured.
+**Before it touches anything**, it shows you every file it wants to create, flags which ones already exist, and waits for you to say yes. Say no and nothing happens.
 
-**Drafting a document:**
-```
-/pm-draft
-```
-Your AI reads your workspace context, asks what type of document you need,
-gathers targeted details, and generates a polished first draft. Supports
-14 document types across product, project, and program management.
+Then it interviews you, with about ten questions covering what the project is, your role, who the stakeholders are, what tools you use, and what you want help with. It also asks whether to back up to GitHub (and can create the repository for you), and which AI models to use for which kind of work, so you're not paying for the most expensive model to append a line to a log.
 
-In Claude Code, pm-draft also runs as an isolated skill (`context: fork`),
-which keeps the drafting work separate from your main conversation context.
+It writes your workspace and stops. Planning your project is part two.
 
-That's it — four commands total: setup once, start and end every session,
-draft when you need a document.
+### Part 2: run the project
+
+```
+/pm-groundwork:pm-project-start
+```
+
+Pick a track:
+
+| Track | What you get |
+|---|---|
+| **Documentation only** | Plans, requirements, and reports. No code. |
+| **Documentation and a prototype** | The documents, plus a plan for a prototype your assistant then helps you build. |
+| **Full delivery** | All of the above, plus a plan through build, launch, and retrospective. |
+
+Documents are drafted for you. Prototypes and build work happen as normal working sessions with your assistant, with the plan tracking them and you confirming when each is genuinely done.
+
+It asks only the questions that track needs, proposes a delivery plan and a set of documents, lets you edit both, then writes `PLAN.md` and drafts the documents one at a time.
+
+### Then, every day
+
+```
+/pm-groundwork:start-session     Where did we leave off?
+   ... do the work ...
+/pm-groundwork:checkpoint        Save progress. Run it as often as you like.
+/pm-groundwork:end-session       Wrap up, back up, summarize.
+```
+
+`start-session` reads your memory files *and* what actually changed in git since last time, so the briefing reflects reality rather than only what someone wrote down.
+
+`checkpoint` is a small safe save. It updates the plan and the log, and never commits. Your assistant will also offer one when the conversation is getting long or a real decision just got made.
+
+`end-session` does the full sweep, scans for accidentally exposed passwords or keys before committing, and pushes.
+
+---
+
+## The skills
+
+| Skill | What it does |
+|---|---|
+| `setup` | Builds the workspace. Asks permission first. |
+| `pm-project-start` | Picks a track, builds the delivery plan, produces the documents. |
+| `start-session` | Briefs you on status, blockers, decisions due, and what changed in git. |
+| `checkpoint` | Mid-session save. No commit. |
+| `end-session` | Daily log, plan update, memory, secret scan, commit, push. |
+| `pm-draft` | Drafts any of 14 document types. |
+| `no-ai-slop` | Checks generated documents for writing that reads as machine-written. |
+
+If you already have a skill named `end-session` or `no-ai-slop`, use the full name, `/pm-groundwork:end-session`, to be unambiguous.
+
+---
+
+## Documents it can draft
+
+**Product** — Product Roadmap · PRD · Product Strategy & Vision · Competitive Analysis · User Stories & Journey Maps
+
+**Project** — Project Charter · Scope Management Plan · Work Breakdown Structure · Risk Management Plan · Project Schedule · Communication Plan · Lessons Learned · Status Report · Stakeholder Register
+
+Plus anything else you describe.
+
+Every document is pre-filled from what your workspace already knows, so a status report doesn't ask you to retype your stakeholders. Nothing is invented. If a section needs information nobody supplied, it's marked as needing input rather than filled with plausible-sounding fiction. Every draft is then checked for AI-writing patterns before it's called finished.
 
 ---
 
 ## What gets created
 
-All workspace files are local to your machine. Setup will offer to add them
-to `.gitignore` so they aren't committed to your repo.
-
-### Claude Code (v2 native layout)
-
-Setup generates files into Claude Code's native `.claude/` directory structure:
-
-| File | What it does |
-|------|-------------|
-| `CLAUDE.md` | Lightweight entrypoint — points to `.claude/` structure, scope-aware GSD routing |
-| `USER.md` | Your context, role, tools, and working preferences |
-| `CONTEXT.md` | Quick orientation summary read at the start of every session |
-| `.claude/agents/pm-lead/AGENT.md` | Agent definition — role, mission, and project context |
-| `.claude/agent-memory/pm-lead/MEMORY.md` | Persistent project knowledge — stakeholders, priorities, risks, decisions summary |
-| `.claude/agent-memory/pm-lead/DECISIONS.md` | Full decision log with rationale, alternatives, and review dates |
-| `.claude/rules/communication.md` | Communication style, calibrated to your project type |
-| `.claude/rules/session-protocol.md` | Session maintenance routine |
-| `.claude/rules/behavior.md` | Workflow behavior rules — what to read, when, and how to act |
-| `.claude/rules/security.md` | Project-level security guardrails (optional if global rules exist) |
-| `.claude/skills/pm-draft/SKILL.md` | Document drafter as isolated skill (`context: fork`) |
-| `.claude/settings.json` | Project-level permissions (scope-aware) |
-| `.mcp.json` | MCP server configuration |
-| `memory/` | Daily session logs — one file per day, auto-created |
-| `.planning/` | GSD planning artifacts — roadmap, state, phase plans (if GSD installed) |
-
-### Other tools (MCP server layout)
-
-When using the MCP server with Cursor, Codex, or Gemini CLI, setup creates
-flat root-level files instead:
-
-| File | What it does |
-|------|-------------|
-| `GEMINI.md` / `AGENTS.md` | Auto-loaded entrypoint (tool-specific) |
-| `USER.md` | Your context, role, tools, and working preferences |
-| `MEMORY.md` | Persistent project knowledge |
-| `DECISIONS.md` | Full decision log with rationale, alternatives, and review dates |
-| `CONTEXT.md` | Quick orientation summary |
-| `IDENTITY.md` | AI agent's role and mission on this specific project |
-| `SOUL.md` | Communication style, calibrated to your project type |
-| `HEARTBEAT.md` | Session maintenance routine |
-| `AGENTS.md` | Behavior rules — what to read, when, and how to act |
-| `memory/` | Daily session logs — one file per day, auto-created |
-
-### Backward compatibility
-
-If you set up a project with v1 (flat root files), your existing layout
-still works. The `/pm-start-session` and `/pm-end-session` commands
-auto-detect which layout you're using and resolve file paths accordingly.
-
-### Optional MEMORY.md sections
-
-Activated automatically based on your project scope and type selections
-during setup. You can select multiple project types — each activates its
-own section:
-
-| Section | Activated when |
-|---------|---------------|
-| `[PROTOTYPE]` Prototype context | Scope: docs + prototype, or full build |
-| `[BUILD]` Build context | Scope: full build only |
-| `[CLIENT]` Client context | Project type includes: client-facing deliverable |
-| `[LAUNCH]` Launch tracker | Project type includes: product launch / go-to-market |
-| `[PROGRAM]` Dependencies map | Project type includes: cross-functional program |
-| `[OPS]` Process/tooling context | Project type includes: internal ops or tooling |
-
----
-
-## MCP server details
-
-The MCP server exposes these capabilities to any connected AI tool:
-
-**Tools (8)** — workspace file operations the AI calls during workflows:
-
-| Tool | What it does |
-|------|-------------|
-| `pm_read_workspace` | Read one or all workspace files |
-| `pm_write_workspace_file` | Create or overwrite a workspace file |
-| `pm_update_workspace_file` | Append to or replace a section within a file |
-| `pm_log_decision` | Log a structured decision with auto ID sequencing |
-| `pm_write_daily_log` | Create or append to a daily session log |
-| `pm_scan_workspace` | Check which workspace files exist |
-| `pm_scan_project_files` | Scan for existing project files (README, docs, specs) |
-| `pm_check_decisions_due` | Find decisions with review date on or before today |
-
-**Resources (5)** — read-only workspace state:
-
-| Resource | What it provides |
-|----------|-----------------|
-| `pm://workspace/context` | Project orientation (CONTEXT.md) |
-| `pm://workspace/memory` | Persistent project knowledge (MEMORY.md) |
-| `pm://workspace/decisions` | Decision log (DECISIONS.md) |
-| `pm://workspace/user` | User context and preferences (USER.md) |
-| `pm://workspace/status` | Computed summary — files present, decisions due, latest log |
-
-**Prompts (4)** — the PM workflows:
-
-| Prompt | What it does |
-|--------|-------------|
-| `pm-setup` | Interactive workspace setup interview |
-| `pm-start-session` | Session briefing — progress, risks, decisions due |
-| `pm-end-session` | Session wrap-up — log, sync, backup |
-| `pm-draft` | PM document drafter (14 document types) |
-
----
-
-## Documents you can draft
-
-Run `/pm-draft` (or the `pm-draft` MCP prompt) to generate any of these.
-Your AI reads workspace context, asks targeted questions, and produces a
-personalized first draft saved to `docs/` in your project.
-
-**Product Management:**
-
-| Document | What it covers |
-|----------|---------------|
-| Product Roadmap | Timeline of features, milestones, and strategic bets |
-| PRD | Feature spec with user stories, requirements, and success metrics |
-| Product Strategy / Vision | Where the product is going and why |
-| Competitive Analysis | Landscape, positioning, and differentiation |
-| User Stories / Journey Map | User perspectives, pain points, and workflows |
-
-**Project Management:**
-
-| Document | What it covers |
-|----------|---------------|
-| Project Charter | Authorization, scope, objectives, and stakeholders |
-| Scope Management Plan | What's in, what's out, and how changes are handled |
-| Work Breakdown Structure | Hierarchical decomposition of deliverables |
-| Risk Management Plan | Risk identification, assessment, and mitigation |
-| Project Schedule / Plan | Timeline, milestones, dependencies, and critical path |
-| Communication Plan | Who gets what information, when, and how |
-| Lessons Learned | What worked, what didn't, and what to carry forward |
-| Project Status Report | Current state, progress, risks, and next steps |
-| Stakeholder Register | Stakeholder identification, influence, and engagement |
-
-You can also select "Something else" to draft a custom document type.
-
----
-
-## The daily workflow
-
 ```
-/pm-start-session (or pm-start-session MCP prompt)
-  → Auto-detects workspace layout (v2 .claude/ or legacy flat files)
-  → Reads all workspace files and project state
-  → Briefing: progress, what's next, risks, decisions due
-  → Helps you pick what to focus on
-
-Do your work
-  → AI logs decisions to DECISIONS.md as they happen
-  → AI updates risks and priorities in MEMORY.md
-  → AI suggests the right approach for structured work
-  → Run /pm-draft when you need a document
-
-/pm-end-session (or pm-end-session MCP prompt)
-  → Auto-detects workspace layout
-  → Daily log created in memory/
-  → Project state and memory synced
-  → Security scan on staged files before commit (checks for credentials)
-  → Git backup (if repo configured)
+your-project/
+├── CLAUDE.md          short pointer to everything else
+├── CONTEXT.md         what this project is, right now
+├── USER.md            you, and how you like to work
+├── PLAN.md            the delivery plan — phases, deliverables, blockers
+├── .claude/
+│   ├── agents/pm-lead/AGENT.md          your PM assistant
+│   ├── agent-memory/pm-lead/
+│   │   ├── MEMORY.md                    status, priorities, stakeholders, risks
+│   │   └── DECISIONS.md                 what you decided and why
+│   ├── rules/                           how it talks to you and behaves
+│   └── settings.json                    what the assistant is allowed to do
+├── memory/            a log per working day
+└── docs/              the documents you create
 ```
 
+All plain markdown. Open them in any editor, edit them by hand, or delete the whole thing. Nothing breaks.
+
+`PLAN.md` and `docs/` are committed to git so your team can see them. Your memory files and personal notes are gitignored by default. Note that `PLAN.md` records blockers by name ("waiting on Priya"), which matters if the repository is shared widely.
+
 ---
 
-## GSD commands (Claude Code only)
+## Upgrading from an older version
 
-If you install the GSD framework, these commands are available for structured
-work. Claude will suggest the right one based on what you're doing.
+Run `setup` in your existing project. It detects what you have and offers to migrate.
 
-| Command | What it does |
-|---------|-------------|
-| `/gsd:new-project` | Initialize the planning framework (run once during setup) |
-| `/gsd:new-milestone` | Start a new milestone cycle with updated goals |
-| `/gsd:discuss-phase` | Gather context before planning a phase of work |
-| `/gsd:plan-phase` | Create a detailed execution plan |
-| `/gsd:execute-phase` | Execute a planned phase |
-| `/gsd:verify-work` | Validate deliverables against success criteria |
-| `/gsd:quick` | Structured but fast — for tasks that need tracking but not full planning |
-| `/gsd:fast` | Inline execution — no subagents, no overhead |
-| `/gsd:progress` | See where things stand |
-| `/gsd:next` | Advance to the next logical step |
-| `/gsd:resume-work` | Pick up after a break with full context restoration |
-| `/gsd:debug` | Systematic debugging with persistent state |
-| `/gsd:note` | Capture an idea quickly |
-| `/gsd:add-backlog` | Park an idea for later |
-| `/gsd:stats` | Project metrics and timeline |
+**Files you wrote yourself are never overwritten silently.** If `CONTEXT.md`, `CLAUDE.md`, or anything else already exists, setup asks per file whether to keep it as is, add to it, or replace it, and shows you what's there before replacing anything.
 
-For the full list: `/gsd:help`
+Migration copies and never moves. Your original files stay exactly where they are until you delete them yourself, and the memory and decision files are verified byte-for-byte identical before it reports success.
+
+If you have a `.planning/` folder from the GSD framework that older versions integrated with, it's left alone. Version 3 no longer uses it, but GSD still works independently if you want it. You'll be offered a one-time import of its roadmap into `PLAN.md`.
+
+If you installed an older version by copying files into `.claude/commands/`, delete those. They still work, and they still reference things that no longer exist.
 
 ---
 
 ## FAQ
 
-**What if I run setup on a project that already has files?**
-PM Groundwork will scan for existing files and offer to read them. If you
-say yes, it pre-fills interview answers from what it finds — you just
-confirm or change each one instead of typing from scratch.
+**Do I need to know how to code?**
+No. If you can answer questions about your own project, you can use this.
 
-**Do I have to use GSD for everything?**
-No. GSD is optional and only available in Claude Code. If you pick "docs only"
-during setup, GSD is skipped entirely. For "docs + prototype" it's offered
-with lighter defaults. For "full build" it's fully initialized. PM Groundwork
-works fine without GSD regardless of scope.
+**Where does my data go?**
+Nowhere. Everything is files in your project folder. If you turn on GitHub backup, it goes to your repository. There is no PM Groundwork service.
 
-**What's the difference between the three project scopes?**
+**Can I edit the files by hand?**
+Yes. They're markdown. Your assistant reads whatever is there.
 
-Scope is a first-class parameter chosen during setup (Phase 1). It controls
-which questions you're asked, which files are generated, and how GSD is
-initialized:
+**What if I don't want GitHub?**
+Setup will say plainly what you're giving up, meaning no off-machine backup and no version history, then let you decline.
 
-- **Documentation only** — PM docs, decision tracking, stakeholder management.
-  3 scope-specific questions (audience, deliverables, review cycle). No code,
-  no GSD.
-- **Documentation + prototype** — Everything above, plus 4 prototype questions
-  (goal, tech stack, success criteria, timeline). GSD is offered with lighter
-  defaults for prototype phase management.
-- **Documentation + prototype + full build** — Everything above, plus 4 build
-  questions (team structure, release strategy, milestones, risk appetite).
-  Full GSD initialization with all features.
+**Does model routing control my costs?**
+It sets sensible defaults and suggests switching models when it matters. It cannot force a model or cap your spending. Anyone telling you a config file controls your AI bill is overselling.
 
-**Will my workspace files be committed to git?**
-Not by default. Setup offers to add all workspace files to `.gitignore`
-during the interview.
+**Something's wrong.**
+Open an issue at [github.com/zoiestar/pm-groundwork/issues](https://github.com/zoiestar/pm-groundwork/issues).
 
-**Can I select more than one project type?**
-Yes. During setup, the project type question (Q9) is "pick all that apply."
-You can select client-facing deliverable, product launch, cross-functional
-program, and/or internal ops — each activates its own optional MEMORY.md
-section so nothing is lost.
+---
 
-**Can multiple people on the same team use this?**
-Yes, but each person runs their own setup in their own local environment.
-Workspace files are per-person, not shared.
+## Credits
 
-**What's the difference between the slash commands and the MCP server?**
-Same workflows, different delivery. The slash commands work in Claude Code
-only and use Claude Code's native `.claude/` directory structure (agents,
-rules, skills). The MCP server works in any tool that supports MCP and
-creates flat root-level workspace files. You only need one — pick whichever
-matches your tool.
+**[no-ai-slop](https://github.com/petergyang/no-ai-slop)** by Peter Yang, MIT licensed, is bundled as the writing-quality gate. See `skills/no-ai-slop/ATTRIBUTION.md`.
 
-**How do I update?**
+Versions 1 and 2 integrated with **GSD (Get Shit Done)** by Lex Christopherson ([@glittercowboy](https://github.com/glittercowboy)) for planning. Version 3 replaced that with its own lightweight `PLAN.md`. GSD is good software and worth a look if you want deeper planning structure.
 
-Slash commands:
-```bash
-cd .groundwork && git pull
-cp .groundwork/.claude/commands/*.md .claude/commands/
-cp -r .groundwork/.claude/skills/* .claude/skills/
-```
-
-MCP server:
-```bash
-npx pm-groundwork-mcp@latest init
-```
-
-**Something broke. What do I do?**
-Open an issue at github.com/zoiestar/pm-groundwork/issues with the
-command you ran, the error you got, your tool and version, and your OS.
+Built on Anthropic's [Model Context Protocol](https://modelcontextprotocol.io).
 
 ---
 
 ## Contributing
 
-Most useful additions:
-- New optional MEMORY.md sections for project types not covered
-- Improvements to the setup interview flow based on real use
-- Additional FAQ entries from issues
-- Bug reports with reproduction steps
+Issues and pull requests welcome. **Workflow instructions live only in `skills/`.** The MCP prompts are generated from those files by `npm run build`, and `npm run check:parity` fails the build if they drift. Never hand-edit anything in `src/generated/`.
 
-**To contribute:**
-1. Fork the repo
-2. Create a branch: `git checkout -b your-feature-name`
-3. Make your changes
-4. Open a pull request with a clear description
-
-For significant changes, open an issue first.
-
-**Code of conduct:** Be direct, be kind, assume good intent.
-
----
+```bash
+cd pm-groundwork-mcp
+npm install
+npm test          # builds, then runs 20 protocol conformance checks
+```
 
 ## License
 
-MIT — use it, fork it, build on it.
+MIT. Use it, fork it, build on it.
 
 ---
 
-*Built by [Jackie Romero](https://github.com/zoiestar) —
-sr. program manager and AI-powered PM tooling nerd.*
+*Built by [Jackie Romero](https://github.com/zoiestar) — a senior technical program manager, not a developer. Every line of this was built by directing Claude Code in plain English, which is also the argument for the tool itself.*

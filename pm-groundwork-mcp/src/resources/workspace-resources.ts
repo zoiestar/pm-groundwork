@@ -1,4 +1,5 @@
 import { readWorkspaceFile, scanWorkspace } from '../workspace/file-manager.js';
+import { detectLayout, describeLayout } from '../workspace/layout.js';
 import { checkDecisionsDue } from '../workspace/decision-manager.js';
 import { getRecentLogs } from '../workspace/daily-log-manager.js';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -10,7 +11,7 @@ export function registerWorkspaceResources(server: McpServer): void {
     'pm://workspace/context',
     { description: 'Project orientation and current state (CONTEXT.md)' },
     async () => {
-      const content = await readWorkspaceFile('CONTEXT.md');
+      const content = await readWorkspaceFile('context');
       return {
         contents: [{
           uri: 'pm://workspace/context',
@@ -27,7 +28,7 @@ export function registerWorkspaceResources(server: McpServer): void {
     'pm://workspace/memory',
     { description: 'Persistent project knowledge — stakeholders, priorities, risks, decisions (MEMORY.md)' },
     async () => {
-      const content = await readWorkspaceFile('MEMORY.md');
+      const content = await readWorkspaceFile('memory');
       return {
         contents: [{
           uri: 'pm://workspace/memory',
@@ -44,7 +45,7 @@ export function registerWorkspaceResources(server: McpServer): void {
     'pm://workspace/decisions',
     { description: 'Full decision log with alternatives and rationale (DECISIONS.md)' },
     async () => {
-      const content = await readWorkspaceFile('DECISIONS.md');
+      const content = await readWorkspaceFile('decisions');
       return {
         contents: [{
           uri: 'pm://workspace/decisions',
@@ -61,7 +62,7 @@ export function registerWorkspaceResources(server: McpServer): void {
     'pm://workspace/user',
     { description: 'User context — name, role, tech level, tools, preferences (USER.md)' },
     async () => {
-      const content = await readWorkspaceFile('USER.md');
+      const content = await readWorkspaceFile('user');
       return {
         contents: [{
           uri: 'pm://workspace/user',
@@ -90,7 +91,10 @@ export function registerWorkspaceResources(server: McpServer): void {
         '# PM Workspace Status\n',
         `**Files present:** ${existingFiles.length > 0 ? existingFiles.join(', ') : 'None'}`,
         `**Files missing:** ${missingFiles.length > 0 ? missingFiles.join(', ') : 'None'}`,
-        `**GSD initialized:** ${planningExists ? 'Yes (.planning/ exists)' : 'No'}`,
+        `**Workspace layout:** ${describeLayout(detectLayout())}`,
+        ...(planningExists
+          ? ['**Note:** a `.planning/` directory from an older version is present; PM Groundwork no longer reads it.']
+          : []),
         `**Decisions due for review:** ${decisionsDue.length > 0 ? decisionsDue.map(d => `${d.id} — ${d.title}`).join(', ') : 'None'}`,
         `**Latest daily log:** ${recentLogs.length > 0 ? recentLogs[0].date : 'None'}`,
       ];

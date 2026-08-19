@@ -32,7 +32,7 @@ export interface NewDecision {
  * Parse DECISIONS.md to find the highest decision ID.
  */
 export async function getNextDecisionId(): Promise<string> {
-  const content = await readWorkspaceFile('DECISIONS.md');
+  const content = await readWorkspaceFile('decisions');
   if (!content) return '#001';
 
   const matches = content.matchAll(/#(\d{3})/g);
@@ -90,16 +90,16 @@ ${input.implications}
 ---`;
 
   // Append to DECISIONS.md
-  const decisions = await readWorkspaceFile('DECISIONS.md');
+  const decisions = await readWorkspaceFile('decisions');
   if (decisions) {
     // Insert before the final comment marker, or at end
     const insertMarker = '<!-- Add new entries above this line';
     if (decisions.includes(insertMarker)) {
       const updated = decisions.replace(insertMarker, entry + '\n' + insertMarker);
-      await writeWorkspaceFile('DECISIONS.md', updated);
+      await writeWorkspaceFile('decisions', updated);
     } else {
       // Just append
-      await writeWorkspaceFile('DECISIONS.md', decisions.trimEnd() + '\n' + entry + '\n');
+      await writeWorkspaceFile('decisions', decisions.trimEnd() + '\n' + entry + '\n');
     }
 
     // Update the index table
@@ -111,13 +111,13 @@ ${input.implications}
       const separatorIdx = decisions.indexOf('\n', headerIdx);
       const nextLineIdx = decisions.indexOf('\n', separatorIdx + 1);
       // Re-read to get updated content
-      const updatedDecisions = await readWorkspaceFile('DECISIONS.md');
+      const updatedDecisions = await readWorkspaceFile('decisions');
       if (updatedDecisions) {
         const hIdx = updatedDecisions.indexOf(indexMarker);
         const sepIdx = updatedDecisions.indexOf('\n', hIdx);
         const nextIdx = updatedDecisions.indexOf('\n', sepIdx + 1);
         const finalContent = updatedDecisions.slice(0, nextIdx + 1) + indexRow + '\n' + updatedDecisions.slice(nextIdx + 1);
-        await writeWorkspaceFile('DECISIONS.md', finalContent);
+        await writeWorkspaceFile('decisions', finalContent);
       }
     }
   }
@@ -133,7 +133,7 @@ ${input.implications}
  * Find decisions with review date <= today.
  */
 export async function checkDecisionsDue(): Promise<Decision[]> {
-  const content = await readWorkspaceFile('DECISIONS.md');
+  const content = await readWorkspaceFile('decisions');
   if (!content) return [];
 
   const today = new Date().toISOString().split('T')[0];

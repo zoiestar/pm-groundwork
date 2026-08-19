@@ -1,32 +1,21 @@
 {
-    "name": "pm-groundwork",
-    "version": "2.0.0",
-    "description": "A PM starter kit for AI coding tools — Claude Code native .claude/ support, Cursor, Codex, and Gemini CLI via MCP. Interactive setup interview, persistent agent memory, structured decision logging, isolated pm-draft skill, and optional GSD framework integration.",
-    "author": {
-      "name": "PM Groundwork Contributors",
-      "github": "zoiestar/pm-groundwork"
-    },
-    "commands": [
-      {
-        "name": "pm-setup",
-        "description": "Bootstrap a new PM project workspace with an interactive interview. Asks about project scope (docs only, docs + prototype, or full build) and tailors questions, files, GSD integration, and MEMORY.md sections accordingly."
-      },
-      {
-        "name": "pm-start-session",
-        "description": "Start-of-session project recap. Summarizes progress, surfaces what's next, flags risks and decisions due for review, and helps you choose what to work on."
-      },
-      {
-        "name": "pm-end-session",
-        "description": "End-of-session wrap-up. Updates memory, logs decisions, syncs GSD state, and backs up to git if configured."
-      },
-      {
-        "name": "pm-draft",
-        "description": "Draft PM documents — PRDs, charters, roadmaps, risk plans, status reports, and more. Reads workspace context, asks targeted questions, generates a personalized first draft."
-      }
-    ],
-    "tags": ["pm", "project-management", "program-management", "productivity", "memory", "decisions", "gsd"],
-    "requires": {
-      "claude-code": ">=2.1.80",
-      "external": ["get-shit-done-cc"]
-    }
-  }
+  "name": "pm-groundwork",
+  "version": "3.0.0",
+  "description": "A PM starter kit for AI tools. Part 1 bootstraps a project workspace with persistent memory, decision logging, and session rituals. Part 2 runs the engagement — documentation only, documentation plus a prototype, or a full delivery plan. Works in Claude Code, Claude Desktop, and Claude Cowork; also available to Cursor, Codex, and Gemini CLI through the pm-groundwork MCP server.",
+  "author": {
+    "name": "Jackie Romero",
+    "github": "zoiestar/pm-groundwork"
+  },
+  "homepage": "https://github.com/zoiestar/pm-groundwork",
+  "license": "MIT",
+  "keywords": [
+    "pm",
+    "project-management",
+    "program-management",
+    "product-management",
+    "productivity",
+    "memory",
+    "decisions",
+    "documentation"
+  ]
+}

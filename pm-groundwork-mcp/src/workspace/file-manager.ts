@@ -4,8 +4,9 @@
 
 import { readFile, writeFile, mkdir, stat, readdir } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
-import { WORKSPACE_FILES, MEMORY_DIR, PLANNING_DIR, getWorkspaceDir } from './config.js';
-import type { WorkspaceFileName } from './config.js';
+import { MEMORY_DIR, LEGACY_PLANNING_DIR, getWorkspaceDir } from './config.js';
+import { LOGICAL_FILES, detectLayout, resolveAny, resolvePath } from './layout.js';
+import type { LogicalFile } from './layout.js';
 
 export interface FileInfo {
   name: string;
@@ -24,7 +25,15 @@ async function fileExists(path: string): Promise<boolean> {
 }
 
 export async function readWorkspaceFile(filename: string): Promise<string | null> {
-  const filePath = join(getWorkspaceDir(), filename);
+  // Accepts a logical name ('memory') or a literal relative path
+  // ('docs/prd-2026-08-19.md'). Logical names resolve per detected layout,
+  // so a v1 workspace reads MEMORY.md and a v3 one reads the agent-memory path.
+  let filePath: string;
+  try {
+    filePath = resolveAny(filename);
+  } catch {
+    return null; // path escaped the workspace
+  }
   try {
     return await readFile(filePath, 'utf-8');
   } catch {
@@ -33,7 +42,9 @@ export async function readWorkspaceFile(filename: string): Promise<string | null
 }
 
 export async function writeWorkspaceFile(filename: string, content: string): Promise<void> {
-  const filePath = join(getWorkspaceDir(), filename);
+  // Writes back to wherever the file lives in the detected layout, so a v1
+  // workspace is never silently converted to v3 by a write.
+  const filePath = resolveAny(filename);
   const dir = dirname(filePath);
   await mkdir(dir, { recursive: true });
   await writeFile(filePath, content, 'utf-8');
@@ -90,8 +101,11 @@ export async function scanWorkspace(): Promise<FileInfo[]> {
   const dir = getWorkspaceDir();
   const results: FileInfo[] = [];
 
-  for (const name of WORKSPACE_FILES) {
-    const filePath = join(dir, name);
+  const layout = detectLayout(dir);
+
+  for (const logical of LOGICAL_FILES) {
+    const filePath = resolvePath(logical as LogicalFile, dir, layout);
+    const name = filePath.slice(dir.length + 1);
     try {
       const s = await stat(filePath);
       results.push({
@@ -123,11 +137,12 @@ export async function scanWorkspace(): Promise<FileInfo[]> {
     // memory/ doesn't exist yet
   }
 
-  // Check .planning/ directory
-  const planDir = join(dir, PLANNING_DIR);
+  // Report a legacy .planning/ directory so migration can offer to import it.
+  // Nothing here reads or writes inside it.
+  const planDir = join(dir, LEGACY_PLANNING_DIR);
   const planningExists = await fileExists(planDir);
   results.push({
-    name: PLANNING_DIR,
+    name: LEGACY_PLANNING_DIR,
     exists: planningExists,
   });
 

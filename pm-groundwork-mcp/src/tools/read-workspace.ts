@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { readWorkspaceFile } from '../workspace/file-manager.js';
-import { WORKSPACE_FILES } from '../workspace/config.js';
+import { LOGICAL_FILES } from '../workspace/layout.js';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 export function registerReadWorkspace(server: McpServer): void {
@@ -13,7 +13,7 @@ export function registerReadWorkspace(server: McpServer): void {
 
       if (target === 'all') {
         const results: string[] = [];
-        for (const name of WORKSPACE_FILES) {
+        for (const name of LOGICAL_FILES) {
           const content = await readWorkspaceFile(name);
           if (content) {
             results.push(`--- ${name} ---\n${content}`);

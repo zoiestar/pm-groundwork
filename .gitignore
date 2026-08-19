@@ -7,3 +7,10 @@ memory/
 # Build artifacts and dependencies
 pm-groundwork-mcp/node_modules/
 pm-groundwork-mcp/dist/
+
+# Internal planning and prep docs (not for distribution)
+.claude/*PLAN*.md
+demo-cheat-sheet-*.md
+
+# Generated from skills/ by npm run build:prompts — never edit, never commit
+pm-groundwork-mcp/src/generated/

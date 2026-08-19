@@ -1,9 +1,9 @@
 {
   "name": "pm-groundwork-mcp",
-  "version": "1.0.0",
-  "description": "MCP server for PM Groundwork — cross-tool PM workspace management for Claude Code, Codex, Cursor, and Gemini CLI",
+  "version": "3.0.0",
+  "description": "MCP server for PM Groundwork \u2014 cross-tool PM workspace management for Claude Code, Codex, Cursor, and Gemini CLI",
   "author": {
-    "name": "PM Groundwork Contributors",
+    "name": "Jackie Romero",
     "url": "https://github.com/zoiestar/pm-groundwork"
   },
   "license": "MIT",
@@ -16,9 +16,14 @@
     "dist/"
   ],
   "scripts": {
+    "build:prompts": "node scripts/build-prompts.mjs",
+    "check:parity": "node scripts/check-parity.mjs",
+    "prebuild": "npm run build:prompts",
     "build": "tsc",
+    "prepublishOnly": "npm run build && npm run check:parity",
     "start": "node dist/index.js",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "npm run build && node scripts/test-protocol.mjs"
   },
   "engines": {
     "node": ">=18"

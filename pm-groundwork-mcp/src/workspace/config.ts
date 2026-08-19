@@ -2,7 +2,11 @@
  * Workspace file configuration — names, paths, and defaults for PM workspace files.
  */
 
-export const WORKSPACE_FILES = [
+/**
+ * Legacy v1 flat-file names, kept only so migration can find them.
+ * Live path resolution belongs to layout.ts — do not add to this list.
+ */
+export const V1_FLAT_FILES = [
   'CLAUDE.md',
   'CONTEXT.md',
   'MEMORY.md',
@@ -14,11 +18,13 @@ export const WORKSPACE_FILES = [
   'AGENTS.md',
 ] as const;
 
-export type WorkspaceFileName = (typeof WORKSPACE_FILES)[number];
-
 export const MEMORY_DIR = 'memory';
 export const DOCS_DIR = 'docs';
-export const PLANNING_DIR = '.planning';
+/**
+ * Legacy GSD planning directory. PM Groundwork v3 never reads or writes it —
+ * this exists only so scans can report it and offer a one-time import.
+ */
+export const LEGACY_PLANNING_DIR = '.planning';
 
 /** Tool-specific auto-load entrypoint files */
 export const TOOL_ENTRYPOINTS: Record<string, string> = {
